@@ -1,13 +1,20 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package SintaticoSemantico;
-
 /**
- *
- * @author Germano
+ * Created by River on 20/05/2017.
  */
-public class Simbolo {
-    
+public class Simbolo
+{
+    String id;
+    boolean terminal;
+
+    public Simbolo(String id, boolean terminal)
+    {
+        this.id = id;
+        this.terminal = terminal;
+    }
+
+    public Simbolo(String id)
+    {
+        this.id = id;
+        this.terminal = false; // NaoTerminal, por padrão
+    }
 }
