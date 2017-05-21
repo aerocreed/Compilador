@@ -177,6 +177,5 @@ public class Automato {
 
     public void setEstado(int estado) {
         this.estado = estado;
-    }
-    
+    }    
 }
