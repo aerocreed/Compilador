@@ -1,9 +1,11 @@
+package SintaticoSemantico;
+
 import java.util.LinkedList;
 
 /**
  * Created by River on 20/05/2017.
  */
-public class Main
+public class Teste
 {
     public static void main(String[] args)
     {
