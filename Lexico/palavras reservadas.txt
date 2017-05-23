@@ -12,13 +12,3 @@ real
 then
 var
 while
-
-
-
-
-
-
-
-
-
-

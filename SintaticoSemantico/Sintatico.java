@@ -1,29 +1,26 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SintaticoSemantico;
 
-import Lexico.TabelaDeSimbolos;
+import Lexico.Simbolo;
 
-/**
- *
- * @author Germano
- */
+import java.util.ArrayList;
+
 public class Sintatico {
     static int index = 0;
     
-    public void Programa(){
-        if(TabelaDeSimbolos.tabela.get(index).getToken().equals("program")){
+    public void Programa(ArrayList<Simbolo> tabela) {
+        if(tabela.get(index).getToken().equals("program")) {
             index++;
-            if(TabelaDeSimbolos.tabela.get(index).getClassificacao().equals("Identificador")){
+
+            if(tabela.get(index).getClassificacao().equals("Identificador")) {
                 index++;
-                if(TabelaDeSimbolos.tabela.get(index).getToken().equals(";")){
+
+                if(tabela.get(index).getToken().equals(";")) {
                     index++;
-                    DeclaracoesVariaveis();
+                    DeclaracoesVariaveis(tabela);
                     DeclaraçõesDeSubProgramas();
                     ComandoComposto();
-                    if(TabelaDeSimbolos.tabela.get(index++).getToken().equals(".")){
+
+                    if(tabela.get(index++).getToken().equals(".")){
                         //OK
                     }
                 }                    
@@ -31,12 +28,12 @@ public class Sintatico {
         }
     }
 
-    public void DeclaracoesVariaveis() {
-       if(TabelaDeSimbolos.tabela.get(index).getToken().equals("var")){
+    public void DeclaracoesVariaveis(ArrayList<Simbolo> tabela) {
+       if(tabela.get(index).getToken().equals("var")) {
            index++;
            ListaDeclaracoesVariaveis();
-           if(TabelaDeSimbolos.tabela.get(index).getToken().isEmpty()) 
-               return;            
+           if(tabela.get(index).getToken().isEmpty())
+               return;
        }
     }
 
