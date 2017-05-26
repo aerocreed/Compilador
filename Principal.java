@@ -1,19 +1,17 @@
-import Lexico.Automato;
-import Lexico.LeitorArquivo;
-import Lexico.Simbolo;
+import Lexico.*;
 
 import java.util.ArrayList;
 
 public class Principal {
-    public static ArrayList<Simbolo> tabela = new ArrayList<>();
-    public static LeitorArquivo l = new LeitorArquivo();
-    public static Automato a = new Automato();
+    public static ArrayList<Token> tokens = new ArrayList<>();
+    public static LeitorArquivo leitor = new LeitorArquivo();
+    public static Lexico lexico = new Lexico();
 
     public static void main(String[] args) {
-        l.lerArquivo(tabela); // Preenche a tabela de símbolos
-        a.analisar(tabela); // Analisa a tabela de símbolos
+        leitor.lerArquivo(tokens); // Preenche lexico tokens de símbolos
+        lexico.executar(tokens); // Analisa lexico tokens de símbolos
 
-        for (int i = 0; i < tabela.size(); i++)
-            System.out.println(tabela.get(i).toString());
+        for (int i = 0; i < tokens.size(); i++)
+            System.out.println(tokens.get(i).toString());
     }
 }

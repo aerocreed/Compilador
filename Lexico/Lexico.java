@@ -2,7 +2,7 @@ package Lexico;
 
 import java.util.ArrayList;
 
-public class Automato {
+public class Lexico {
     private int estado;
     private boolean estadoFinal;
     private int linha;
@@ -13,22 +13,22 @@ public class Automato {
     public final int[] aceitacao = {2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
     public final String[] classificacao = {tps[1], tps[2], tps[3], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4]};
 
-    public Automato() {
+    public Lexico() {
         estado = 0;
         estadoFinal = false;
         linha = 1;
     }
 
-    public void analisar(ArrayList<Simbolo> tabela) {
+    public void executar(ArrayList<Token> tokens) {
         // Percorre o código fonte separado em tokens
-        for (int i = 0; i < tabela.size(); i++) {
+        for (int i = 0; i < tokens.size(); i++) {
             // Para cada token, percorre caractere por caractere
-            for (int j = 0; j < tabela.get(i).getToken().length(); j++)
-                estadoFinal = executarTransicao(tabela.get(i).getToken().charAt(j));
+            for (int j = 0; j < tokens.get(i).getToken().length(); j++)
+                estadoFinal = transicao(tokens.get(i).getToken().charAt(j));
 
             if (estadoFinal) {
                 estadoFinal = false;
-                tabela.get(i).setClassificacao(TipoToken(tabela.get(i).getToken()));
+                tokens.get(i).setClassificacao(TipoToken(tokens.get(i).getToken()));
                 estado = 0;
             }
         }
@@ -45,7 +45,7 @@ public class Automato {
         return "Invalido";
     }
 
-    public boolean executarTransicao(char simbolo) {
+    public boolean transicao(char simbolo) {
         int estado = getEstado();
         if (simbolo == '\n')
             linha++;
@@ -148,10 +148,8 @@ public class Automato {
     public int getEstado() {
         return estado;
     }
-
-    public boolean isEstadoFinal() {
-        return estadoFinal;
-    }
+    public boolean isEstadoFinal() { return estadoFinal; }
+    public int getLinha() { return linha; }
 
     public void setEstado(int estado) {
         this.estado = estado;
@@ -159,4 +157,5 @@ public class Automato {
     public void setEstadoFinal(boolean estadoFinal) {
         this.estadoFinal = estadoFinal;
     }
+    public void setLinha(int linha) { this.linha = linha; }
 }

@@ -1,10 +1,7 @@
-package SintaticoSemantico;
+package SintaticoSemantico.util;
 
 import java.util.LinkedList;
 
-/**
- * Created by River on 20/05/2017.
- */
 public final class Producao extends Simbolo
 {
     LinkedList<Simbolo> simbolos;

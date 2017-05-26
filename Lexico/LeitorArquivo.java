@@ -2,7 +2,6 @@ package Lexico;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -18,7 +17,7 @@ public class LeitorArquivo {
 
     public String[] SeparaTokens(String s) {
         // Adiciona espaços após cada token e símbolos
-        s = s.replaceAll(DELIMITADORES, "$1" + SEP); // Add spaces to these words and symbols
+        s = s.replaceAll(DELIMITADORES, "$1" + SEP); // Adicionar espaços para as palavras e símbolos
 
         // Remove espaços que não estejam entre apóstrofos ('...')
         s = s.replaceAll("('.+')|\\s+", "$1");
@@ -28,9 +27,9 @@ public class LeitorArquivo {
         return tokens;
     }
 
-    public void lerArquivo(ArrayList<Simbolo> tabela) {
+    public void lerArquivo(ArrayList<Token> tokens) {
         Scanner ler;
-        String[] tokens;
+        String[] tokensString;
         String texto = "";
         String tmp;
         int linha = 1;
@@ -40,7 +39,7 @@ public class LeitorArquivo {
 
 
         try {
-            ler = new Scanner(arquivo); // muda o Scanner, que agora passa a ler o arquivo
+            ler = new Scanner(arquivo);
 
             while (ler.hasNext())
                 texto += ler.nextLine() + "\n";
@@ -50,11 +49,11 @@ public class LeitorArquivo {
 
             while (ler.hasNext()) {
                 tmp = ler.nextLine();
-                tokens = SeparaTokens(tmp);
+                tokensString = SeparaTokens(tmp);
 
-                for (int i = 0; i < tokens.length; i++)
-                    if (!tokens[i].isEmpty())
-                        tabela.add(new Simbolo(tokens[i], "", linha));
+                for (int i = 0; i < tokensString.length; i++)
+                    if (!tokensString[i].isEmpty())
+                        tokens.add(new Token(tokensString[i], "", linha));
 
                 linha++;
             }

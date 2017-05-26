@@ -1,8 +1,5 @@
-package SintaticoSemantico;
+package SintaticoSemantico.util;
 
-/**
- * Created by River on 20/05/2017.
- */
 public class Simbolo
 {
     String id;

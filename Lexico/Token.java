@@ -1,25 +1,25 @@
 package Lexico;
 
-public class Simbolo {
+public class Token {
     String token, classificacao;
-    int linhaToken;
+    int linha;
 
-    public Simbolo(String token, String classificacao, int linhaToken) {
+    public Token(String token, String classificacao, int linha) {
         this.token = token;
         this.classificacao = classificacao;
-        this.linhaToken = linhaToken;
+        this.linha = linha;
     }
 
     public String getToken() { return token; }
     public String getClassificacao() { return classificacao; }
-    public int getLinhaToken() { return linhaToken; }
+    public int getLinha() { return linha; }
 
     public void setToken(String token) { this.token = token; }
     public void setClassificacao(String classificacao) { this.classificacao = classificacao; }
-    public void setLinhaToken(int linhaToken) { this.linhaToken = linhaToken; }
+    public void setLinha(int linha) { this.linha = linha; }
 
     @Override
     public String toString() {
-        return "Token: " + token + "\tClasssificacao: " + classificacao + "\tLinha: " + linhaToken;
+        return "Token: " + token + "\tClasssificacao: " + classificacao + "\tLinha: " + linha;
     }
 }

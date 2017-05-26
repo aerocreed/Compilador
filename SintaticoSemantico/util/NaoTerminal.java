@@ -1,10 +1,7 @@
-package SintaticoSemantico;
+package SintaticoSemantico.util;
 
 import java.util.LinkedList;
 
-/**
- * Created by River on 20/05/2017.
- */
 public final class NaoTerminal extends Simbolo
 {
     LinkedList<Simbolo> filhos = new LinkedList<>();
@@ -13,7 +10,6 @@ public final class NaoTerminal extends Simbolo
     public NaoTerminal(String id, boolean terminal, LinkedList<Producao> producoes)
     {
         super(id, terminal);
-        this.filhos = filhos;
         this.producoes = producoes;
     }
 
@@ -37,7 +33,7 @@ public final class NaoTerminal extends Simbolo
         filhos = producoes.get(idProducao).simbolos;
 
         // Agora que temos os 'filhos', devemos executar o mesmo método nos filhos não-terminais
-        for (Simbolo filho : filhos)
+        for (Token filho : filhos)
             if (filho instanceof NaoTerminal && !filho.terminal)
                 ((NaoTerminal)filho).gerarFilhos();
     }*/
