@@ -23,8 +23,10 @@ public class Lexico {
         // Percorre o código fonte separado em tokens
         for (int i = 0; i < tokens.size(); i++) {
             // Para cada token, percorre caractere por caractere
-            for (int j = 0; j < tokens.get(i).getToken().length(); j++)
+            for (int j = 0; j < tokens.get(i).getToken().length(); j++) {
+                linha = tokens.get(i).getLinha();
                 estadoFinal = transicao(tokens.get(i).getToken().charAt(j));
+            }
 
             if (estadoFinal) {
                 estadoFinal = false;
@@ -57,92 +59,128 @@ public class Lexico {
                     System.err.println("Comentário aberto e não fechado na linha " + linha + ".");
                 }
 
-                if (Character.isLetter(simbolo))
+                if (Character.isLetter(simbolo)) {
                     estado = 2;
-                else if (Character.isDigit(simbolo))
+                }
+                else if (Character.isDigit(simbolo)) {
                     estado = 3;
-                else if (simbolo == ';')
+                }
+                else if (simbolo == '.') {
                     estado = 6;
-                else if (simbolo == '.')
+                }
+                else if (simbolo == ',') {
                     estado = 7;
-                else if (simbolo == ':')
+                }
+                else if (simbolo == ';') {
                     estado = 8;
-                else if (simbolo == ',')
+                }
+                else if (simbolo == ':') {
                     estado = 9;
-                else if (simbolo == '(')
-                    estado = 10;
-                else if (simbolo == ')')
+                }
+                else if (simbolo == '(') {
                     estado = 11;
-                else if (simbolo == '=')
+                }
+                else if (simbolo == ')') {
                     estado = 12;
-                else if (simbolo == '<')
-                    estado = 13;
-                else if (simbolo == '>')
+                }
+                else if (simbolo == '<') {
                     estado = 14;
-                else if (simbolo == '+')
-                    estado = 18;
-                else if (simbolo == '-')
+                }
+                else if (simbolo == '=') {
+                    estado = 16;
+                }
+                else if (simbolo == '>') {
+                    estado = 17;
+                }
+                else if (simbolo == '-') {
                     estado = 19;
-                else if (simbolo == '*')
+                }
+                else if (simbolo == '+') {
                     estado = 20;
-                else if (simbolo == '/')
+                }
+                else if (simbolo == '/') {
                     estado = 21;
+                }
+                else if (simbolo == '*') {
+                    estado = 22;
+                }
+                else{
+                    System.err.println("Simbolo: " + simbolo + " nao pertence a linguagem");
+                }
                 break;
             case 1:
-                if (simbolo == '}')
+                if (simbolo == '}'){
                     estado = 0;
+                }
                 break;
 
             case 2:
-                if (Character.isLetter(simbolo) || Character.isDigit(simbolo) || simbolo == '_')
+                if (Character.isLetter(simbolo) || Character.isDigit(simbolo) || simbolo == '_'){
                     estado = 2;
+                }
                 break;
 
             case 3:
-                if (Character.isDigit(simbolo))
+                if (Character.isDigit(simbolo)){
                     estado = 3;
-                else if (simbolo == '.')
+                }
+                else if (simbolo == '.'){
                     estado = 4;
+                }
                 break;
 
             case 4:
             case 5:
-                if (Character.isDigit(simbolo))
+                if (Character.isDigit(simbolo)){
                     estado = 5;
+                }
                 break;
 
-            case 8:
-                if (simbolo == '=')
-                    estado = 11;
-                break;
-
-            case 13:
-                if (simbolo == '=')
-                    estado = 15;
-                else if (simbolo == '<')
-                    estado = 17;
+            case 9:
+                if (simbolo == '='){
+                    estado = 10;
+                }
                 break;
 
             case 14:
-                if (simbolo == '=')
-                    estado = 16;
+                if (simbolo == '='){
+                    estado = 15;
+                }
+                else if (simbolo == '>'){
+                    estado = 13;
+                }
                 break;
+
+            case 17:
+                if (simbolo == '='){
+                    estado = 18;
+                }
+                break;
+                
+            case 19:
+                if(simbolo == '>'){
+                    estado = 23;
+                }
 
             // Nenhuma transição é possível
             default:
         }
         setEstado(estado);
 
-        for (int i = 0; i < aceitacao.length; i++)
-            if (estado == aceitacao[i])
+        for (int i = 0; i < aceitacao.length; i++) {
+            if (estado == aceitacao[i]){
                 return true;
+            }
+        }
         return false;
     }
 
     public boolean isPalavraReservada(String token) {
-        for (int i = 0; i < palavrasReservadas.length; i++)
-            if (token.equals(palavrasReservadas[i]))
+        for (int i = 0; i < palavrasReservadas.length; i++) {
+            if (token.equals(palavrasReservadas[i])) {
                 return true;
+            }
+        }
         return false;
     }
 
