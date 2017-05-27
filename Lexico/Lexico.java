@@ -47,14 +47,15 @@ public class Lexico {
 
     public boolean transicao(char simbolo) {
         int estado = getEstado();
-        if (simbolo == '\n')
-            linha++;
+        // if (simbolo == '\n');
 
         switch (estado) {
             /* Comentários */
             case 0:
-                if (simbolo == '{')
+                if (simbolo == '{') {
                     estado = 1;
+                    System.err.println("Comentário aberto e não fechado na linha " + linha + ".");
+                }
 
                 if (Character.isLetter(simbolo))
                     estado = 2;

@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class LeitorArquivo {
     final String COMENTARIOS = "\\{(.|\\n)+}";
-    final String DELIMITADORES = "('.+'|\\d+\\.\\d+|\\w+|<>|:=|>=|<=|[.,:;()+\\-*/><])"; // Número real foi usado como delimitador aqui para que o '.' não separasse em dois inteiros
+    final String DELIMITADORES = "('.+'|\\d+\\.\\d+|\\w+|->|<>|:=|>=|<=|[.,:;()+\\-*/><])"; // Número real foi usado como delimitador aqui para que o '.' não separasse em dois inteiros
     final String SEP = "<SEP>"; // Usado temporiamente para a separação dos tokens
 
     public String RemoveComentarios(String s) {
@@ -34,7 +34,7 @@ public class LeitorArquivo {
         String tmp;
         int linha = 1;
 
-        String caminho_arquivo = "src/teste.p";
+        String caminho_arquivo = "src/exemplo.p";
         File arquivo = new File(caminho_arquivo);
 
 
