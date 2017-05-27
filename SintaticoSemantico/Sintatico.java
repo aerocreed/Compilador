@@ -38,8 +38,8 @@ public class Sintatico {
                 if (tokenAtual.getToken().equals(";")) {
                     transicao(tokens, semantico);
                     DeclaracoesVariaveis(tokens, semantico);
-                    DeclaracoesSubProgramas();
-                    ComandoComposto();
+                    DeclaracoesSubProgramas(tokens, semantico);
+                    ComandoComposto(tokens, semantico);
                     transicao(tokens, semantico);
 
                     if (!tokenAtual.getToken().equals("."))
@@ -142,14 +142,14 @@ public class Sintatico {
 
     public void DeclaracoesSubProgramas2(ArrayList<Token> tokens, Semantico semantico) {
         if (tokenAtual.getToken().equals("procedure")) {
-            DeclaracaoSubPrograma();
+            DeclaracaoSubPrograma(tokens, semantico);
             transicao(tokens, semantico);
             if (tokenAtual.getToken().equals(";")) {
                 transicao(tokens, semantico);
                 DeclaracoesSubProgramas2(tokens, semantico);
             }
             else
-                exibirErro(";")
+                exibirErro(";");
         }
     }
 
@@ -160,12 +160,12 @@ public class Sintatico {
             transicao(tokens, semantico);
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 transicao(tokens, semantico);
-                Argumentos();
+                Argumentos(tokens, semantico);
                 if (tokenAtual.getToken().equals(";")) {
                     transicao(tokens, semantico);
                     DeclaracoesVariaveis(tokens, semantico);
                     DeclaracoesSubProgramas(tokens, semantico);
-                    ComandoComposto();
+                    ComandoComposto(tokens, semantico);
                 }
                 else
                     exibirErro(";");
@@ -180,7 +180,7 @@ public class Sintatico {
     public void Argumentos(ArrayList<Token> tokens, Semantico semantico) {
         if (tokenAtual.getToken().equals("(")) {
             transicao(tokens, semantico);
-            ListaParametros();
+            ListaParametros(tokens, semantico);
             if (tokenAtual.getToken().equals(")")) {
                 transicao(tokens, semantico);
                 //return
