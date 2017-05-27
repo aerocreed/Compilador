@@ -33,6 +33,38 @@ public class Semantico {
         return index;
     }
     
+    void automato_pilha(ArrayList<Token> tabela, int cont, int i, int estado)
+    {                              
+        switch (estado) {
+        /* Comentários */
+            case 0:
+                if (tabela.get(i).getToken().equals("procedure")) {
+                    estado = 1;
+                    ++cont;
+                }
+                else if (tabela.get(i).getToken().equals("end")) {
+                    --cont;
+                }
+            break;
+                
+            case 1:
+                if (tabela.get(i).getToken().equals("procedure")) {
+                    ++cont;
+                }
+                else if (tabela.get(i).getToken().equals("end")) {
+                    estado = 0;
+                    --cont;
+                }
+            break;                
+        }
+        if(cont == 0 && i == tabela.size()){
+            return;
+        }
+        automato_pilha(tabela, cont, i++, estado);        
+    }
+    
+    
+    
     int empilhaProcedure(ArrayList<Token> tabela, int i)
     {
         i++;                
