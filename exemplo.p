@@ -1,23 +1,24 @@
 program exemplo(); {programa exemplo}
     var a, b: integer;
 
-    Procedure p( x );
+    procedure p( x );
         var b, c: integer;
         begin
 
-        end
-    Procedure q;
+    end
+    procedure q;
         var c, d: integer;
 
-        Procedure r( y );
+        procedure r( y );
             var e, f: integer;
             begin
 
-            end
+        end
 
-         begin
+        begin
 
-         end
+    end
+
     begin
 
-    end.
+end.
