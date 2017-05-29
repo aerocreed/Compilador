@@ -1,5 +1,5 @@
 program exemplo(); {programa exemplo}
-    var a, b: integer;
+    var a, b, b: integer;
 
     procedure p( x );
         var b, c: integer;

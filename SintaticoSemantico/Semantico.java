@@ -34,9 +34,19 @@ public class Semantico {
                 System.out.println();
             }
             i++;
+        }                
+    }
+    
+    void identificadoresMesmoNome(String token, int index){
+        int i=pilha.size()-1;
+        while(!pilha.get(i).equals(MARK)){
+            if(pilha.elementAt(i).equals(token) ){
+                System.err.println("Identificador " + token + " ja' declarado");
+                return;
+            }
+            i--;
         }
-        
-        
+        pilha.push(tabela.get(index).getToken());
     }
     
     int empilhaVars(ArrayList<Token> tabela, int i)
@@ -45,9 +55,9 @@ public class Semantico {
             if(tabela.get(i).getToken().equals("var")){
                 i++;
                 while(!tabela.get(i).getToken().equals(":")){
-                    if(!tabela.get(i).getToken().equals(",")){                        
+                    if(!tabela.get(i).getToken().equals(",")){                                                
+                        identificadoresMesmoNome(tabela.get(i).getToken(), i);
                         System.out.println(tabela.get(i).getToken());
-                        pilha.push(tabela.get(i).getToken());
                     }
                     i++;
                 }
@@ -68,7 +78,7 @@ public class Semantico {
         while(!tabela.get(i).getToken().equals(")")){
             if(!tabela.get(i).getToken().equals(",")){                        
                 System.out.println(tabela.get(i).getToken());
-                pilha.push(tabela.get(i).getToken());
+                identificadoresMesmoNome(tabela.get(i).getToken(), i);
             }
             i++;
         }  
