@@ -19,7 +19,7 @@ public class Semantico {
     
     private final String MARK = "$";
     
-    int empilhaVars(ArrayList<Token> tabela, int index){
+/*    int empilhaVars(ArrayList<Token> tabela, int index){
         while(!tabela.get(index++).getToken().equals("var"))
             ;   
         while(!tabela.get(index).getToken().equals("procedure") && !tabela.get(index).getToken().equals("begin")){            
@@ -31,7 +31,7 @@ public class Semantico {
             index++;
         }    
         return index;
-    }
+    }*/
     
     void automato_pilha(ArrayList<Token> tabela, int cont, int i, int estado)
     {                              
@@ -150,6 +150,102 @@ public class Semantico {
         
         System.out.println("PILHA:");
         System.out.println(pilha.toString());
+    }        
+    
+    void empilhaTeste(ArrayList<Token> tabela){
+        int i=0;
+        System.out.println("MARK");
+        pilha.push(MARK);
+        //Empilha variáveis de program
+        i = empilhaVars(tabela, i);
+        while(i < tabela.size()){
+            //System.out.println("TOKEN: " + tabela.get(i).getToken());
+            if(tabela.get(i).getToken().equals("procedure")){
+                //System.out.println("PROCEDURE ANTES: " + tabela.get(i).getToken());
+                i = empilhaProcedureTeste(tabela, i);
+                //System.out.println("PROCEDURE DEPOIS: " + tabela.get(i).getToken());
+            }
+            if(tabela.get(i).getToken().equals("begin")){
+                desempilha();
+                System.out.println();
+            }
+            i++;
+        }
+        
+        
+    }
+    
+    int empilhaVars(ArrayList<Token> tabela, int i)
+    {
+        while(!(tabela.get(i).getToken().equals("procedure") || tabela.get(i).getToken().equals("begin"))){
+            if(tabela.get(i).getToken().equals("var")){
+                i++;
+                while(!tabela.get(i).getToken().equals(":")){
+                    if(!tabela.get(i).getToken().equals(",")){                        
+                        System.out.println(tabela.get(i).getToken());
+                        pilha.push(tabela.get(i).getToken());
+                    }
+                    i++;
+                }
+            }
+            i++;
+        }    
+        return i;
+    }
+    
+    int empilhaParametros(ArrayList<Token> tabela, int i)
+    {
+        while(!(tabela.get(i).getToken().equals("("))){
+            i++;
+        }
+        //Posiciona o índice na posição do primeiro parâmetro
+        i++;
+        //Empilha os parâmetros
+        while(!tabela.get(i).getToken().equals(")")){
+            if(!tabela.get(i).getToken().equals(",")){                        
+                System.out.println(tabela.get(i).getToken());
+                pilha.push(tabela.get(i).getToken());
+            }
+            i++;
+        }  
+        return i;
+    }
+    
+    int empilhaProcedureTeste(ArrayList<Token> tabela, int i){
+        //Empilha identificador do procedimento
+        //if(tabela.get(i).getToken().equals("procedure")){
+            i++;                
+            System.out.println(tabela.get(i).getToken());   
+            pilha.push(tabela.get(i).getToken());
+            System.out.println("MARK");
+            pilha.push(MARK);
+            //i++;
+            //Empilha os parâmetros, caso tenha
+            if(!tabela.get(i+1).getToken().equals(";")){
+                i = empilhaParametros(tabela, i);
+            }
+            i = empilhaVars(tabela, i);
+            return i-1;
+        //}
+    /*
+        while(!tabela.get(i).getToken().equals("end.")){
+            if(tabela.get(i).getClassificacao().equals("Identificador")){
+                System.out.println(tabela.get(i).getToken());
+                pilha.push(tabela.get(i).getToken());
+            }
+            else if(tabela.get(i).getToken().equals("end")){
+                System.out.println("FIM DO ESCOPO");
+                desempilha();
+            }
+            else if(tabela.get(i).getToken().equals("procedure")){
+                System.out.println("RECURSIVIDADE");
+                empilhaProcedure(tabela, i);                
+            }
+            
+            i++;
+        }*/
+        //quando o token for end, desempilha até mark, inclusive
+        //desempilha();
     }
     
     void empilha(ArrayList<Token> tabela)
@@ -181,16 +277,19 @@ public class Semantico {
         }
     }
     
-    void desempilha()
+    int desempilha()
     {
+        int cont = 0;
         //Desempilha tudo até MARK
         while(!pilha.lastElement().equals(MARK)){
             System.out.println("Desempilhou " + pilha.lastElement());
             pilha.pop();
+            cont ++;
         }
         //Desempilha MARK
         System.out.println("Desempilhou " + pilha.lastElement());
         pilha.pop();
+        return cont+1;
     }
     
     public static ArrayList<Token> tabela = new ArrayList<>();
@@ -203,6 +302,6 @@ public class Semantico {
         
         Semantico s = new Semantico();
         
-        s.empilhaTokens(tabela);
+        s.empilhaTeste(tabela);
     }
 }
