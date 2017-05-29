@@ -1,21 +1,26 @@
 package Lexico;
 
 public class Token {
-    String token, classificacao;
+    String token;
+    String classificacao;
+    String tipo;
     int linha;
 
-    public Token(String token, String classificacao, int linha) {
+    public Token(String token, String classificacao, String tipo, int linha) {
         this.token = token;
         this.classificacao = classificacao;
+        this.tipo = tipo;
         this.linha = linha;
     }
 
     public String getToken() { return token; }
     public String getClassificacao() { return classificacao; }
+    public String getTipo() { return tipo; }
     public int getLinha() { return linha; }
 
     public void setToken(String token) { this.token = token; }
     public void setClassificacao(String classificacao) { this.classificacao = classificacao; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
     public void setLinha(int linha) { this.linha = linha; }
 
     @Override
