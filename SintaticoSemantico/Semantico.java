@@ -10,10 +10,6 @@ import Lexico.Token;
 import java.util.ArrayList;
 import java.util.Stack;
 
-/**
- *
- * @author Germano
- */
 public class Semantico {
     public static Stack<String> pilha = new Stack<>();
     
@@ -37,11 +33,11 @@ public class Semantico {
         }                
     }
     
-    void identificadoresMesmoNome(String token, int index){
+    void identificadoresMesmoNome(Token token, int index){
         int i=pilha.size()-1;
         while(!pilha.get(i).equals(MARK)){
-            if(pilha.elementAt(i).equals(token) ){
-                System.err.println("Identificador " + token + " ja' declarado");
+            if(pilha.elementAt(i).equals(token.getToken()) ){
+                System.err.println("O token " + token.getToken() + " (" + token.getClassificacao() +") ja' foi declarado na linha " + token.getLinha() + ".");
                 return;
             }
             i--;
@@ -56,7 +52,7 @@ public class Semantico {
                 i++;
                 while(!tabela.get(i).getToken().equals(":")){
                     if(!tabela.get(i).getToken().equals(",")){                                                
-                        identificadoresMesmoNome(tabela.get(i).getToken(), i);
+                        identificadoresMesmoNome(tabela.get(i), i);
                         System.out.println(tabela.get(i).getToken());
                     }
                     i++;
@@ -78,7 +74,7 @@ public class Semantico {
         while(!tabela.get(i).getToken().equals(")")){
             if(!tabela.get(i).getToken().equals(",")){                        
                 System.out.println(tabela.get(i).getToken());
-                identificadoresMesmoNome(tabela.get(i).getToken(), i);
+                identificadoresMesmoNome(tabela.get(i), i);
             }
             i++;
         }  
