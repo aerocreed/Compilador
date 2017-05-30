@@ -10,8 +10,8 @@ public class Lexico {
     public final String[] tps = {"Palavra Reservada", "Identificador", "Numero Inteiro", "Numero Real", "Delimitador"};
     private String palavrasReservadas[] = {"begin", "boolean", "do", "else", "end", "if", "integer", "not", "procedure", "program", "real", "then", "var", "while", "or", "and"};
 
-    public final int[] aceitacao = {2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21};
-    public final String[] classificacao = {tps[1], tps[2], tps[3], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4]};
+    public final int[] aceitacao = {2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
+    public final String[] classificacao = {tps[1], tps[2], tps[3], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4], tps[4]};
 
     public Lexico() {
         estado = 0;
@@ -30,9 +30,9 @@ public class Lexico {
 
             if (estadoFinal) {
                 estadoFinal = false;
-                tokens.get(i).setClassificacao(TipoToken(tokens.get(i).getToken()));
-                estado = 0;
+                tokens.get(i).setClassificacao(TipoToken(tokens.get(i).getToken()));                
             }
+            estado = 0;
         }
     }
 
@@ -48,7 +48,6 @@ public class Lexico {
     }
 
     public boolean transicao(char simbolo) {
-        int estado = getEstado();
         // if (simbolo == '\n');
 
         switch (estado) {
@@ -58,8 +57,7 @@ public class Lexico {
                     estado = 1;
                     System.err.println("Comentário aberto e não fechado na linha " + linha + ".");
                 }
-
-                if (Character.isLetter(simbolo)) {
+                else if (Character.isLetter(simbolo)) {
                     estado = 2;
                 }
                 else if (Character.isDigit(simbolo)) {
@@ -118,6 +116,9 @@ public class Lexico {
                 if (Character.isLetter(simbolo) || Character.isDigit(simbolo) || simbolo == '_'){
                     estado = 2;
                 }
+                else {
+                    return false;
+                }
                 break;
 
             case 3:
@@ -127,6 +128,9 @@ public class Lexico {
                 else if (simbolo == '.'){
                     estado = 4;
                 }
+                else {
+                    return false;
+                }
                 break;
 
             case 4:
@@ -134,37 +138,52 @@ public class Lexico {
                 if (Character.isDigit(simbolo)){
                     estado = 5;
                 }
+                else {
+                   return false;
+                }                
                 break;
 
             case 9:
                 if (simbolo == '='){
                     estado = 10;
                 }
+                else {
+                    return false;
+                }                
                 break;
 
             case 14:
                 if (simbolo == '='){
                     estado = 15;
-                }
+                }                
                 else if (simbolo == '>'){
                     estado = 13;
                 }
+                else {
+                    return false;
+                }                
                 break;
 
             case 17:
                 if (simbolo == '='){
                     estado = 18;
                 }
+                else {
+                    return false;
+                }                
                 break;
                 
             case 19:
                 if(simbolo == '>'){
                     estado = 23;
                 }
+                else {
+                    return false;
+                }                
 
             // Nenhuma transição é possível
             default:
-        }
+        }        
         setEstado(estado);
 
         for (int i = 0; i < aceitacao.length; i++) {
