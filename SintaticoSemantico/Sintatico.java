@@ -40,6 +40,7 @@ System.out.println("3 > " + tokenAtual);
                     transicao(tokens);
 System.out.println("4 > " + tokenAtual);
                     DeclaracoesVariaveis(tokens);
+System.out.println("\n");
                     DeclaracoesSubProgramas(tokens);
                     ComandoComposto(tokens);
                     transicao(tokens);
@@ -60,7 +61,7 @@ System.out.println("4 > " + tokenAtual);
     public void DeclaracoesVariaveis(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("var")) {
             transicao(tokens);
-            System.out.println("5 > " + tokenAtual);
+            System.out.println("5, 20 > " + tokenAtual);
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 ListaDeclaracaoVariaveis(tokens);
@@ -77,10 +78,10 @@ System.out.println("4 > " + tokenAtual);
         String varnome = tokenAtual.getToken();
         ListaIdentificadores(tokens);
 
-        System.out.println("8 > " + tokenAtual);
+        System.out.println("8, 23 > " + tokenAtual);
         if (tokenAtual.getToken().equals(":")) {
             transicao(tokens);
-            System.out.println("9 > " + tokenAtual);
+            System.out.println("9, 24 > " + tokenAtual);
             String vartipo = tokenAtual.getToken();
             int varlinha = tokenAtual.getLinha();
 
@@ -88,6 +89,7 @@ System.out.println("4 > " + tokenAtual);
             Tipo();
 
             transicao(tokens);
+            System.out.println("10, 25 > " + tokenAtual);
 
             if (tokenAtual.getToken().equals(";")) {
                 transicao(tokens);
@@ -97,7 +99,7 @@ System.out.println("4 > " + tokenAtual);
                 exibirErro(";");
         }
         else
-            exibirErro(":1");
+            exibirErro(":");
     }
 
     private void ListaDeclaracaoVariaveis2(ArrayList<Token> tokens) {
@@ -109,8 +111,8 @@ System.out.println("4 > " + tokenAtual);
             o teste para 1 token atrás a validação começou a funcionar, mas ainda não entendi
             o motivo.
          */
+        System.out.println("11, 26 > " + tokenAtual);
         if (tokenAtual.getClassificacao().equals("Identificador")) {
-        System.out.println("kk " + tokenAtual);
             String varnome = tokenAtual.getToken();
             ListaIdentificadores(tokens);
 
@@ -132,7 +134,7 @@ System.out.println("4 > " + tokenAtual);
                     exibirErro(";");
             }
             else
-                exibirErro(":2");
+                exibirErro(":");
         }
     }
 
@@ -141,7 +143,7 @@ System.out.println("4 > " + tokenAtual);
     public void ListaIdentificadores(ArrayList<Token> tokens) {
         if (tokenAtual.getClassificacao().equals("Identificador")) {
             transicao(tokens);
-            System.out.println("6 > " + tokenAtual);
+            System.out.println("6, 15, 21 > " + tokenAtual);
             ListaIdentificadores2(tokens);
         }
     }
@@ -149,12 +151,12 @@ System.out.println("4 > " + tokenAtual);
     public void ListaIdentificadores2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals(",")) {
             transicao(tokens);
-            System.out.println("7 > " + tokenAtual);
+            System.out.println("7, 22 > " + tokenAtual);
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 // semantico.pushTypeStack(tokenAtual.getToken(), null, tokenAtual.getLinha())
                 transicao(tokens);
-                System.out.println("8 > " + tokenAtual);
+                System.out.println("8, 23 > " + tokenAtual);
                 ListaIdentificadores2(tokens);
             }
             else
@@ -186,11 +188,14 @@ System.out.println("4 > " + tokenAtual);
     public void DeclaracaoSubPrograma(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("procedure")) {
             transicao(tokens);
+            System.out.println("12 > " + tokenAtual);
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 transicao(tokens);
+                System.out.println("13 > " + tokenAtual);
                 Argumentos(tokens);
                 if (tokenAtual.getToken().equals(";")) {
                     transicao(tokens);
+                    System.out.println("19 > " + tokenAtual);
                     DeclaracoesVariaveis(tokens);
                     DeclaracoesSubProgramas(tokens);
                     ComandoComposto(tokens);
@@ -208,9 +213,11 @@ System.out.println("4 > " + tokenAtual);
     public void Argumentos(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("(")) {
             transicao(tokens);
+            System.out.println("14 > " + tokenAtual);
             ListaParametros(tokens);
             if (tokenAtual.getToken().equals(")")) {
                 transicao(tokens);
+                System.out.println("18 > " + tokenAtual);
                 //return
             }
             else
@@ -221,19 +228,22 @@ System.out.println("4 > " + tokenAtual);
 
 
     public void ListaParametros(ArrayList<Token> tokens) {
+        System.out.println("14 > " + tokenAtual);
         String varnome = tokenAtual.getToken();
         ListaIdentificadores(tokens);
         if (tokenAtual.getToken().equals(":")) {
             transicao(tokens);
+            System.out.println("16 > " + tokenAtual);
             String vartipo = tokenAtual.getToken();
             int varlinha = tokenAtual.getLinha();
             // semantico.pushTypeStack(varnome, vartipo, varlinha)
             Tipo();
             transicao(tokens);
+            System.out.println("17 > " + tokenAtual);
             ListaParametros2(tokens);
         }
         else
-            exibirErro(":3");
+            exibirErro(":");
     }
 
     public void ListaParametros2(ArrayList<Token> tokens) {
@@ -270,23 +280,27 @@ System.out.println("4 > " + tokenAtual);
     }
 
     public void ComandosOpcionais(ArrayList<Token> tokens) {
+        System.out.println("27 > " + tokenAtual);
         if (tokenAtual.getClassificacao().equals("Identificador") ||
                 tokenAtual.getToken().equals("while") ||
                 tokenAtual.getToken().equals("if") ||
-                tokenAtual.getToken().equals("begin"))
+                tokenAtual.getToken().equals("begin")) {
             ListaComandos(tokens);
+        }
     }
 
 
 
     public void ListaComandos(ArrayList<Token> tokens) {
         Comando(tokens);
+        System.out.println("11 > " + tokenAtual);
         ListaComandos2(tokens);
     }
 
     public void ListaComandos2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals(";")) {
             transicao(tokens);
+            System.out.println("33q > " + tokenAtual);
             Comando(tokens);
             ListaComandos2(tokens);
         }
@@ -298,9 +312,11 @@ System.out.println("4 > " + tokenAtual);
         // Identificadores
         if (tokenAtual.getClassificacao().equals("Identificador")) {
             transicao(tokens);
+            System.out.println("28 > " + tokenAtual);
 
             if (tokenAtual.getToken().equals(":=")) {
                 transicao(tokens);
+                System.out.println("29 > " + tokenAtual);
                 Expressao(tokens);
             } else if (tokenAtual.getToken().equals("(")) {
                 AtivacaoProcedimento(tokens);
@@ -336,6 +352,9 @@ System.out.println("4 > " + tokenAtual);
             else
                 exibirErro("do");
         }
+        // Não exibe erro
+        else if (tokenAtual.getToken().equals("end"))
+            return;
         // If it's not a command
         else
             exibirErro("Comando");
@@ -414,7 +433,9 @@ System.out.println("4 > " + tokenAtual);
             ExpressaoSimples2(tokens);
         }
         else {
+            System.out.println("29 > " + tokenAtual);
             Termo(tokens);
+            System.out.println("30 > " + tokenAtual);
             ExpressaoSimples2(tokens);
         }
     }
@@ -425,6 +446,7 @@ System.out.println("4 > " + tokenAtual);
                 tokenAtual.getToken().equals("or")) {
             OpAditivo(tokens);
             transicao(tokens);
+            System.out.println("31 > " + tokenAtual);
             Termo(tokens);
             ExpressaoSimples2(tokens);
         }
@@ -433,7 +455,7 @@ System.out.println("4 > " + tokenAtual);
 
 
     public void Termo(ArrayList<Token> tokens) {
-        Fator(tokens);
+        Fator(tokens);System.out.println("11, 32 > " + tokenAtual);
         transicao(tokens);
         Termo2(tokens);
     }
@@ -455,13 +477,11 @@ System.out.println("4 > " + tokenAtual);
     public void Fator(ArrayList<Token> tokens) {
         if (tokenAtual.getClassificacao().equals("Identificador"))
             FatorExp(tokens);
-        /*
-        else if (tokenAtual.getClassificacao().equals("integer") ||
-                 tokenAtual.getClassificacao().equals("real") ||
+        else if (tokenAtual.getClassificacao().equals("Numero Inteiro") ||
+                 tokenAtual.getClassificacao().equals("Numero Real") ||
                  tokenAtual.getToken().equals("true") ||
                  tokenAtual.getToken().equals("false"))
-            return;
-        */
+            return; // Não exibe erro
         else if (tokenAtual.getToken().equals("(")) {
             transicao(tokens);
             Expressao(tokens);
