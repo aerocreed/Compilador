@@ -4,7 +4,7 @@ program exemplo; {programa exemplo}
     procedure p( x : integer; y : boolean );
         var b, c: integer;
         begin
-            b := 5 + 3;
+            b := x + y;
     end;
     procedure q;
         var c, d: integer;
