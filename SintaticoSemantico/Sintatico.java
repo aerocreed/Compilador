@@ -16,9 +16,9 @@ public class Sintatico {
     // Executa o próximo token
     public void transicao(ArrayList<Token> tokens) {
         if (index < tokens.size()) {
-            tokenAtual = tokens.get(index);
+            tokenAtual = tokens.get(index++);
             // semantico.pushStack(token)
-            index++;
+            //index++;
         }
     }
 
@@ -26,15 +26,19 @@ public class Sintatico {
 
     public void Programa(ArrayList<Token> tokens) {
         transicao(tokens);
+System.out.println("1 > " + tokenAtual);
 
         if (tokenAtual.getToken().equals("program")) {
             transicao(tokens);
+System.out.println("2 > " + tokenAtual);
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 transicao(tokens);
+System.out.println("3 > " + tokenAtual);
 
                 if (tokenAtual.getToken().equals(";")) {
                     transicao(tokens);
+System.out.println("4 > " + tokenAtual);
                     DeclaracoesVariaveis(tokens);
                     DeclaracoesSubProgramas(tokens);
                     ComandoComposto(tokens);
@@ -56,9 +60,11 @@ public class Sintatico {
     public void DeclaracoesVariaveis(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("var")) {
             transicao(tokens);
+            System.out.println("5 > " + tokenAtual);
 
-            if (tokenAtual.getClassificacao().equals("Identificador"))
+            if (tokenAtual.getClassificacao().equals("Identificador")) {
                 ListaDeclaracaoVariaveis(tokens);
+            }
             else
                 exibirErro("Identificador");
         }
@@ -71,8 +77,10 @@ public class Sintatico {
         String varnome = tokenAtual.getToken();
         ListaIdentificadores(tokens);
 
+        System.out.println("8 > " + tokenAtual);
         if (tokenAtual.getToken().equals(":")) {
             transicao(tokens);
+            System.out.println("9 > " + tokenAtual);
             String vartipo = tokenAtual.getToken();
             int varlinha = tokenAtual.getLinha();
 
@@ -89,7 +97,7 @@ public class Sintatico {
                 exibirErro(";");
         }
         else
-            exibirErro(":");
+            exibirErro(":1");
     }
 
     private void ListaDeclaracaoVariaveis2(ArrayList<Token> tokens) {
@@ -102,6 +110,7 @@ public class Sintatico {
             o motivo.
          */
         if (tokenAtual.getClassificacao().equals("Identificador")) {
+        System.out.println("kk " + tokenAtual);
             String varnome = tokenAtual.getToken();
             ListaIdentificadores(tokens);
 
@@ -123,7 +132,7 @@ public class Sintatico {
                     exibirErro(";");
             }
             else
-                exibirErro(":");
+                exibirErro(":2");
         }
     }
 
@@ -132,17 +141,20 @@ public class Sintatico {
     public void ListaIdentificadores(ArrayList<Token> tokens) {
         if (tokenAtual.getClassificacao().equals("Identificador")) {
             transicao(tokens);
-            ListaDeclaracaoVariaveis2(tokens);
+            System.out.println("6 > " + tokenAtual);
+            ListaIdentificadores2(tokens);
         }
     }
 
     public void ListaIdentificadores2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals(",")) {
             transicao(tokens);
+            System.out.println("7 > " + tokenAtual);
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 // semantico.pushTypeStack(tokenAtual.getToken(), null, tokenAtual.getLinha())
                 transicao(tokens);
+                System.out.println("8 > " + tokenAtual);
                 ListaIdentificadores2(tokens);
             }
             else
@@ -221,7 +233,7 @@ public class Sintatico {
             ListaParametros2(tokens);
         }
         else
-            exibirErro(":");
+            exibirErro(":3");
     }
 
     public void ListaParametros2(ArrayList<Token> tokens) {
@@ -514,7 +526,7 @@ public class Sintatico {
 
 
     public void Tipo() {
-        if (tokenAtual.getToken() != "integer" && tokenAtual.getToken() != "real" && tokenAtual.getToken() != "boolean")
+        if (!tokenAtual.getToken().equals("integer") && !tokenAtual.getToken().equals("real") && !tokenAtual.getToken().equals("boolean"))
             exibirErro("Tipo");
     }
 

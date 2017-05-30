@@ -1,4 +1,4 @@
-program exemplo(); {programa exemplo}
+program exemplo; {programa exemplo}
     var a, b: integer;
 
     procedure p( x );
