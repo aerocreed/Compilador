@@ -11,14 +11,19 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class Semantico {
-    public static Stack<Token> pilha = new Stack<>();
+    public static Stack<String> pilha = new Stack<>();
+    final String OPERADORES_NUM = "+|*|-|/|";
+    final String OPERADORES_BOOL = "->|<>|>=|<=";
     
     private final String MARK = "$";
  
     void empilha(ArrayList<Token> tabela){
         int i=0;
         System.out.println("MARK");
-        pilha.push(new Token(MARK, 0));
+        pilha.push(MARK);
+        String tipoRes = "";
+        String operador = "";
+        Token aux = null, aux2 = null;
         //Empilha variáveis de program
         i = empilhaVars(tabela, i);
         while(i < tabela.size()){
@@ -28,23 +33,63 @@ public class Semantico {
             //verifica uso sem declaração
             if(tabela.get(i).getToken().equals("begin")){
                 while(!tabela.get(i).getToken().equals("end")){                                        
-                        if(pilha.contains(tabela.get(i).getToken())){
+                        if(tabela.get(i).getClassificacao().equals("Identificador")){
                             //System.out.println("usado: " + _tabela.get(i).getToken());
-                            for(int j=pilha.size()-1; j>=0; j--){
-                                if(pilha.get(j).equals(tabela.get(i).getToken())){
-                                    tabela.get(i).setTipo(MARK);
+                            if(pilha.contains(tabela.get(i).getToken())){
+                                for(int j=pilha.size()-1; j>=0; j--){
+                                    if(tabela.get(i).getToken().equals(pilha.get(j))){
+                                        tipoRes = tabela.get(i).getTipo();
+                                        break;
+                                    }
                                 }
-                            }
-                            if(tabela.get(i).getClassificacao().equals("Identificador")){
+                                i++;
+                                if(tabela.get(i).getToken().equals(":=")){
+                                    i++;
+                                    if(tabela.get(i).getClassificacao().equals("Identificador")){
+                                        //Adiciona o tipo a variável usada
+                                        for(int j=pilha.size()-1; j>=0; j--){
+                                            if(tabela.get(i).getToken().equals(pilha.get(j))){
+                                                aux = tabela.get(i);
+                                                break;
+                                            }
+                                        }
+                                        i++;                                        
+                                        if(tabela.get(i).getClassificacao().equals("Delimitador")){
+                                            operador = tabela.get(i).getToken();
+                                            i++;
+                                            for(int j=pilha.size()-1; j>=0; j--){
+                                                if(tabela.get(i).getToken().equals(pilha.get(j))){
+                                                    aux2 = tabela.get(i);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        
+                                        String res = verificaTipoOp(aux, aux2);
+                                        System.out.println("RES: " + res);
+                                        if(aux.getTipo().equals("boolean") && aux2.getTipo().equals("boolean")){
+                                            if(!operador.matches(OPERADORES_BOOL)){
+                                                //System.out.println("")
+                                            }
+                                        }
+                                        else if((aux.getTipo().equals("integer") || aux.getTipo().equals("real"))
+                                                &&
+                                            aux2.getTipo().equals("integer") && aux2.getTipo().equals("real")){
+                                            //verifica se o operador é para tipos numericos
+                                        }
+                                        else if(!res.equals(tipoRes)){
+                                            System.err.println("Operacao entre " + aux + " e " + aux2 + " e' invla'lida");
+                                        }                                                                                
+                                    }
+                                }/*{
                                 if(tabela.get(i+2).getClassificacao().equals("Identificador")){
                                     if((verificaTipoOp(tabela.get(i), tabela.get(i+2)).equals("Invalida")))
                                         System.err.println("Operacao entre " + tabela.get(i).getTipo() + " e " + tabela.get(i+2).getTipo() + " e' invla'lida");
-                                }                            
-                        }                            
-                        else{
-                            System.err.println("Variavel " + tabela.get(i).getToken() + " nao declarada");
-                            break;
-                        }
+                                } */                           
+                            }                            
+                            else{
+                                System.err.println("Variavel " + tabela.get(i).getToken() + " nao declarada");                            
+                            }
                     }
                     i++;
                 }                
@@ -57,14 +102,14 @@ public class Semantico {
     
     void identificadoresMesmoNome(Token token, int index){
         int i=pilha.size()-1;
-        while(!pilha.get(i).getToken().equals(MARK)){
+        while(!pilha.get(i).equals(MARK)){
             if(pilha.elementAt(i).equals(token.getToken()) ){
                 System.err.println("O token " + token.getToken() + " (" + token.getClassificacao() +") ja' foi declarado na linha " + token.getLinha() + ".");
                 return;
             }
             i--;
         }
-        pilha.push(_tabela.get(index));
+        pilha.push(_tabela.get(index).getToken());
     }
     
     int empilhaVars(ArrayList<Token> tabela, int i)
@@ -107,9 +152,9 @@ public class Semantico {
         //Empilha identificador do procedimento
         i++;                
         System.out.println(tabela.get(i).getToken());   
-        pilha.push(tabela.get(i));
+        pilha.push(tabela.get(i).getToken());
         System.out.println("MARK");
-        pilha.push(new Token(MARK,0));
+        pilha.push(MARK);
         //Empilha os parâmetros, caso tenha
         if(!tabela.get(i+1).getToken().equals(";")){
             i = empilhaParametros(tabela, i);
@@ -123,7 +168,7 @@ public class Semantico {
     {
         int cont = 0;
         //Desempilha tudo até MARK
-        while(!pilha.lastElement().getToken().equals(MARK)){
+        while(!pilha.lastElement().equals(MARK)){
             System.out.println("Desempilhou " + pilha.lastElement());
             pilha.pop();
             cont ++;
@@ -150,8 +195,7 @@ public class Semantico {
         }
         else if(esquerda.getTipo().equals("boolean") && direita.getTipo().equals("boolean")){
             return "boolean";
-        }
-        System.err.println("Erro: operacao entre " + esquerda.getTipo() + " e " + direita.getTipo() + " e' inv'alida");
+        }        
         return "Invalida";        
     }
 

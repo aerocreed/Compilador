@@ -2,8 +2,9 @@ program exemplo; {programa exemplo}
     var a, b: integer;
 
     procedure p( x : integer; y : boolean );
-        var b, c: integer;
+        var b, c, b: integer;
         begin
+            g := x + y;
             b := x + y;
     end;
     procedure q;
