@@ -36,6 +36,6 @@ public class Token {
 
     @Override
     public String toString() {
-        return "[Token: " + token + "]\t[Classsificacao: " + classificacao + "]\t[Tipo: " + tipo + "]\t[Linha: " + linha + "]";
+        return "[Token: " + token + "]\t[Classificacao: " + classificacao + "]\t[Tipo: " + tipo + "]\t[Linha: " + linha + "]";
     }
 }

@@ -78,8 +78,8 @@ public class Sintatico {
             int varlinha = tokenAtual.getLinha();
 
             // semantico.pushTypeStack(varnome, vartipo, varlinha)
-            System.out.println("1: [ Varnome: " + varnome + " ] [ Vartipo: " + vartipo + " ] [ Varlinha: " + varlinha + " ]");
-            Tipo();
+            if (!isTipo(tokenAtual))
+                exibirErro("Tipo");
 
             transicao(tokens);
 
@@ -113,8 +113,8 @@ public class Sintatico {
                 int varlinha = tokenAtual.getLinha();
 
                 // semantico.pushTypeStack(varnome, vartipo, varlinha)
-                System.out.println("2: [ Varnome: " + varnome + " ] [ Vartipo: " + vartipo + " ] [ Varlinha: " + varlinha + " ]");
-                Tipo();
+                if (!isTipo(tokenAtual))
+                    exibirErro("Tipo");
 
                 transicao(tokens);
 
@@ -145,7 +145,6 @@ public class Sintatico {
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 // semantico.pushTypeStack(tokenAtual.getToken(), null, tokenAtual.getLinha())
-                System.out.println("3: [ Varnome: " + tokenAtual.getToken()+ " ] [ Vartipo: " + "null" + " ] [ Varlinha: " + tokenAtual.getLinha() + " ]");
                 transicao(tokens);
                 ListaIdentificadores2(tokens);
             }
@@ -220,8 +219,8 @@ public class Sintatico {
             String vartipo = tokenAtual.getToken();
             int varlinha = tokenAtual.getLinha();
             // semantico.pushTypeStack(varnome, vartipo, varlinha)
-            System.out.println("4: [ Varnome: " + varnome + " ] [ Vartipo: " + vartipo + " ] [ Varlinha: " + varlinha + " ]");
-            Tipo();
+            if (!isTipo(tokenAtual))
+                exibirErro("Tipo");
             transicao(tokens);
             ListaParametros2(tokens);
         }
@@ -239,8 +238,8 @@ public class Sintatico {
                 String vartipo = tokenAtual.getToken();
                 int varlinha = tokenAtual.getLinha();
                 // semantico.pushTypeStack(varnome, vartipo, varlinha)
-                System.out.println("5: [ Varnome: " + varnome + " ] [ Vartipo: " + vartipo + " ] [ Varlinha: " + varlinha + " ]");
-                Tipo();
+                if (!isTipo(tokenAtual))
+                    exibirErro("Tipo");
                 transicao(tokens);
                 ListaParametros2(tokens);
             }
@@ -521,9 +520,133 @@ public class Sintatico {
 
 
 
-    public void Tipo() {
-        if (!tokenAtual.getToken().equals("integer") && !tokenAtual.getToken().equals("real") && !tokenAtual.getToken().equals("boolean"))
-            exibirErro("Tipo");
+    public static boolean isTipo(Token token) {
+        return token.getToken().equals("integer") || token.getToken().equals("real") || token.getToken().equals("boolean");
+    }
+
+
+
+    public static void tokensAddTiposVariaveis(ArrayList<Token> tabela) {
+        // Atribuindo tipos das variaveis
+        String tipoEncontrado = "";
+        for (int i = 0; i < tabela.size(); i++) {
+            //System.out.println(tabela.get(i)); // Printa tokens
+
+            // Se o tipoEncontrado estiver resetado, verifique se o token e' var
+            if (tipoEncontrado.equals("")) {
+                if (tabela.get(i).getToken().equals("var")) {
+                    //if (i + 1 < tabela.size() && tabela.get(i + 1).getClassificacao().equals("Identificador")) {
+                        // Percorre novamente da posição atual até a palavra reservada depois de :
+                        for (int j = i + 1; j < tabela.size(); j++) {
+                            //System.out.println("Simbolo '" + _tabela.get(j).getToken() + " e' igual a ':'?");
+
+                            // Encontrou ':'
+                            if (tabela.get(j).getToken().equals(":") &&
+                                (j + 1) < tabela.size() && isTipo(tabela.get(j + 1))) {
+                                //System.out.println("Simbolo '" + _tabela.get(j).getToken() + "' encontrado com sucesso!");
+                                tipoEncontrado = tabela.get(j + 1).getToken();
+                                break;
+                            }
+                        }
+                    //}
+                }
+            }
+            else {
+                // Se encontrou tipo
+                if (tabela.get(i).getClassificacao().equals("Identificador")) {
+                    //System.out.println("Atribuido o tipo '" + tipoEncontrado + "' a variavel '" + token.getToken() + "'.");
+                    tabela.get(i).setTipo(tipoEncontrado);
+                }
+                // Se encontrar ':', resete o tipoEncontrado
+                if (tabela.get(i).getToken().equals(":")) {
+                    //System.out.println("Resetou tipoEncontrado!");
+                    tipoEncontrado = "";
+                }
+            }
+        }
+    }
+
+    public static void tokensAddTiposParametros(ArrayList<Token> tabela) {
+        // Atribuindo tipos dos parametros
+        String tipoEncontrado = "";
+        boolean parentesesInicialEncontrado = false;
+        for (int i = 0; i < tabela.size(); i++) {
+            //System.out.println(tabela.get(i)); // Printa tokens
+
+            // Se o tipoEncontrado estiver resetado, verifique se o token e' var
+            if (tipoEncontrado.equals("")) {
+                if (tabela.get(i).getToken().equals("procedure") &&
+                    i + 1 < tabela.size() && tabela.get(i + 1).getClassificacao().equals("Identificador")) {
+                    //System.out.println(">> Encontrou 'procedure Identificador'");
+
+                    if (!parentesesInicialEncontrado) {
+                        // procedure p( x : integer; y : boolean);
+                        // procedure p();
+                        if (i + 2 < tabela.size() && tabela.get(i + 2).getToken().equals("(")) {
+                            //System.out.println(">> >> Encontrou '('");
+                            parentesesInicialEncontrado = true;
+                        }
+
+                        // Parametro encontrado
+                        if (i + 3 < tabela.size() && tabela.get(i + 3).getClassificacao().equals("Identificador")) {
+                            //System.out.println(">> >> >> Encontrou 'Identificador'");
+                            // Percorre novamente da posição atual até a palavra reservada depois de :
+                            for (int j = i + 3; j < tabela.size(); j++) {
+                                // Encontrou ':'
+                                if (tabela.get(j).getToken().equals(":") &&
+                                    (j + 1) < tabela.size() && isTipo(tabela.get(j + 1))) {
+                                    //System.out.println(">> >> >> >> Encontrou ':'");
+                                    tipoEncontrado = tabela.get(j + 1).getToken();
+                                    break;
+                                }
+                            }
+                            //i = i + 3; // Proximo loop vai continuar lendo do primeiro parametro encontrado ou do ":"
+                        }
+                    }
+                }
+                else if (parentesesInicialEncontrado && tabela.get(i).getToken().equals(";")) {
+                    //System.out.println(">> Encontrou ';'");
+                    // Parametro encontrado
+                    if (i + 1 < tabela.size() && tabela.get(i + 1).getClassificacao().equals("Identificador")) {
+                        //System.out.println(">> >> Encontrou 'Identificador'");
+                        // Percorre novamente da posição atual até a palavra reservada depois de :
+                        for (int j = i + 1; j < tabela.size(); j++) {
+                            // Encontrou ':'
+                            if (tabela.get(j).getToken().equals(":") &&
+                                (j + 1) < tabela.size() && isTipo(tabela.get(j + 1))) {
+                                //System.out.println(">> >> >> Encontrou ':'");
+                                tipoEncontrado = tabela.get(j + 1).getToken();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                if (!parentesesInicialEncontrado || i > 0 && tabela.get(i - 1).getToken().equals("procedure")) {
+                    //System.out.println("[else] >> Parenteses inicial nao foi encontrado ou e' nome da funcao, ignore");
+                    continue;
+                }
+                // Se encontrou tipo
+                else if (tabela.get(i).getClassificacao().equals("Identificador")) {
+                    //System.out.println("[else] >> Atribuido o tipo '" + tipoEncontrado + "' a variavel '" + tabela.get(i).getToken() + "'.");
+                    tabela.get(i).setTipo(tipoEncontrado);
+
+                    // Se encontrar ';' dentro do parenteses, resete o tipoEncontrado
+                    // (...x; y : integer) -> y seria a posicao i + 3
+                    if (i + 3 < tabela.size() && tabela.get(i + 3).getToken().equals(";")) {
+                        //System.out.println(">> >> Resetou tipoEncontrado!");
+                        tipoEncontrado = "";
+                        // Mantemos o parentesesInicialEncontrado true porque ainda leremos mais parametros
+                    }
+                }
+                else if (tabela.get(i).getToken().equals(")")) {
+                    //System.out.println("[else] >> Resetou tipoEncontrado e parentesesInicialEncontrado!");
+                    tipoEncontrado = "";
+                    parentesesInicialEncontrado = false;
+                }
+            }
+        }
     }
 
 
@@ -540,12 +663,6 @@ public class Sintatico {
 
 
 
-    public static boolean isTipo(Token token) {
-        return token.getToken().equals("integer") || token.getToken().equals("real") || token.getToken().equals("boolean");
-    }
-
-
-
     public static ArrayList<Token> _tabela = new ArrayList<>();
     public static LeitorArquivo _leitorArquivo = new LeitorArquivo();
     public static Lexico _lexico = new Lexico();
@@ -557,51 +674,14 @@ public class Sintatico {
 
         Sintatico sintatico = new Sintatico();
 
-        /*
-        // Atribuindo tipos das variaveis
-        String tipoEncontrado = "";
-        for (int i = 0; i < _tabela.size(); i++) {
+        tokensAddTiposVariaveis(_tabela); // Preenche tipos dos tokens das variaveis
+        tokensAddTiposParametros(_tabela); // Preenche tipos dos tokens dos parametros
+
+        System.out.println("\n\n\n");
+        for (int i = 0; i < _tabela.size(); i++)
             System.out.println(_tabela.get(i)); // Printa tokens
-
-            Token token = _tabela.get(i);
-
-            // Se o tipoEncontrado estiver resetado, verifique se o token e' var
-            if (tipoEncontrado.equals("")) {
-                if (token.getToken().equals("var")) {
-                    // Percorre novamente da posição atual até a palavra reservada depois de :
-                    for (int j = i + 1; j < _tabela.size(); j++) {
-                        //System.out.println("Simbolo '" + _tabela.get(j).getToken() + " e' igual a ':'?");
-
-                        // Encontrou ':'
-                        if (_tabela.get(j).getToken().equals(":") && (j + 1) < _tabela.size() && isTipo(_tabela.get(j + 1))) {
-                            //System.out.println("Simbolo '" + _tabela.get(j).getToken() + "' encontrado com sucesso!");
-                            tipoEncontrado = _tabela.get(j + 1).getToken();
-                            break;
-                        }
-                    }
-                }
-            }
-            else {
-                // Se encontrou tipo
-                if (token.getClassificacao().equals("Identificador")) {
-                    //System.out.println("Atribuido o tipo '" + tipoEncontrado + "' a variavel '" + token.getToken() + "'.");
-                    token.setTipo(tipoEncontrado);
-                }
-                // Se encontrar ':', resete o tipoEncontrado
-                if (token.getToken().equals(":")) {
-                    //System.out.println("Restou tipoEncontrado!");
-                    tipoEncontrado = "";
-                }
-            }
-        }
-        */
-
-
 
         _sintatico.lexico = _lexico;
         _sintatico.executar(_tabela);
-        //System.out.println("\n\n\n");
-        //for (int i = 0; i < _tabela.size(); i++)
-        //System.out.println(_tabela.get(i)); // Printa tokens
     }
 }
