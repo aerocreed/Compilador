@@ -523,7 +523,7 @@ public class Sintatico {
     /* Utilitários */
 
     public void exibirErro(String tokenEsperado) {
-        System.out.println("Erro sintático: \'" + tokenEsperado + "\' esperado em \'" + lexico.getEstado() + "\' (linha: \'" + lexico.getLinha() + "\')");
+        System.out.println("Erro sintático: \'" + tokenEsperado + "\' esperado na linha: \'" + tokenAtual.getLinha() + "\'.");
     }
 
     /*public String toString() {
