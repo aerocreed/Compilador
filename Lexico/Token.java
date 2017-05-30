@@ -2,7 +2,7 @@ package Lexico;
 
 public class Token {
     String token;
-    String classificacao = "";
+    String classificacao = "Invalido";
     String tipo = "";
     int linha;
 
@@ -36,6 +36,6 @@ public class Token {
 
     @Override
     public String toString() {
-        return "Token: " + token + "\tClasssificacao: " + classificacao + "\tLinha: " + linha;
+        return "[Token: " + token + "]\t[Classsificacao: " + classificacao + "]\t[Tipo: " + tipo + "]\t[Linha: " + linha + "]";
     }
 }
