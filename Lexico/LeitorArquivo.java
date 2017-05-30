@@ -53,7 +53,7 @@ public class LeitorArquivo {
 
                 for (int i = 0; i < tokensString.length; i++)
                     if (!tokensString[i].isEmpty())
-                        tokens.add(new Token(tokensString[i], "", linha));
+                        tokens.add(new Token(tokensString[i], linha));
 
                 linha++;
             }
