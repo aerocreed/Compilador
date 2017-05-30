@@ -5,13 +5,25 @@ import Lexico.*;
 import java.util.ArrayList;
 
 public class Sintatico {
-    public int index = 0;
-    public Lexico lexico;
-    public Token tokenAtual;
+    private int index = 0;
+    private Lexico lexico;
+    private Token tokenAtual;
 
 
 
-    public void executar(ArrayList<Token> tokens) { Programa(tokens); }
+    public Sintatico(Lexico lexico) {
+        this.lexico = lexico;
+    }
+
+
+
+    public void executar(ArrayList<Token> tokens) {
+        lexico.executar(tokens); // Analisa a _tabela de símbolos
+        tokensAddTiposVariaveis(tokens); // Preenche tipos dos tokens das variaveis
+        tokensAddTiposParametros(tokens); // Preenche tipos dos tokens dos parametros
+
+        Programa(tokens);
+    }
 
     // Executa o próximo token
     public void transicao(ArrayList<Token> tokens) {
@@ -530,12 +542,12 @@ public class Sintatico {
         // Atribuindo tipos das variaveis
         String tipoEncontrado = "";
         for (int i = 0; i < tabela.size(); i++) {
-            //System.out.println(tabela.get(i)); // Printa tokens
+            //System.out.println(_tabela.get(i)); // Printa tokens
 
             // Se o tipoEncontrado estiver resetado, verifique se o token e' var
             if (tipoEncontrado.equals("")) {
                 if (tabela.get(i).getToken().equals("var")) {
-                    //if (i + 1 < tabela.size() && tabela.get(i + 1).getClassificacao().equals("Identificador")) {
+                    //if (i + 1 < _tabela.size() && _tabela.get(i + 1).getClassificacao().equals("Identificador")) {
                         // Percorre novamente da posição atual até a palavra reservada depois de :
                         for (int j = i + 1; j < tabela.size(); j++) {
                             //System.out.println("Simbolo '" + _tabela.get(j).getToken() + " e' igual a ':'?");
@@ -571,7 +583,7 @@ public class Sintatico {
         String tipoEncontrado = "";
         boolean parentesesInicialEncontrado = false;
         for (int i = 0; i < tabela.size(); i++) {
-            //System.out.println(tabela.get(i)); // Printa tokens
+            //System.out.println(_tabela.get(i)); // Printa tokens
 
             // Se o tipoEncontrado estiver resetado, verifique se o token e' var
             if (tipoEncontrado.equals("")) {
@@ -629,7 +641,7 @@ public class Sintatico {
                 }
                 // Se encontrou tipo
                 else if (tabela.get(i).getClassificacao().equals("Identificador")) {
-                    //System.out.println("[else] >> Atribuido o tipo '" + tipoEncontrado + "' a variavel '" + tabela.get(i).getToken() + "'.");
+                    //System.out.println("[else] >> Atribuido o tipo '" + tipoEncontrado + "' a variavel '" + _tabela.get(i).getToken() + "'.");
                     tabela.get(i).setTipo(tipoEncontrado);
 
                     // Se encontrar ';' dentro do parenteses, resete o tipoEncontrado
@@ -666,22 +678,13 @@ public class Sintatico {
     public static ArrayList<Token> _tabela = new ArrayList<>();
     public static LeitorArquivo _leitorArquivo = new LeitorArquivo();
     public static Lexico _lexico = new Lexico();
-    public static Sintatico _sintatico = new Sintatico();
+    public static Sintatico _sintatico = new Sintatico(_lexico);
 
     public static void main(String[] args) {
-        _leitorArquivo.lerArquivo(_tabela); // Preenche lexico _tabela de símbolos
-        _lexico.executar(_tabela); // Analisa lexico _tabela de símbolos
+        _leitorArquivo.lerArquivo(_tabela); // Preenche a _tabela de símbolos
+        _sintatico.executar(_tabela); // Preenche os tipos dos tokens variaveis e parametros, exceto onde estao usadas; verifica erros sintaticos
 
-        Sintatico sintatico = new Sintatico();
-
-        tokensAddTiposVariaveis(_tabela); // Preenche tipos dos tokens das variaveis
-        tokensAddTiposParametros(_tabela); // Preenche tipos dos tokens dos parametros
-
-        System.out.println("\n\n\n");
         for (int i = 0; i < _tabela.size(); i++)
             System.out.println(_tabela.get(i)); // Printa tokens
-
-        _sintatico.lexico = _lexico;
-        _sintatico.executar(_tabela);
     }
 }

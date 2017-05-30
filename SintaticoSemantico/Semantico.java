@@ -29,7 +29,7 @@ public class Semantico {
             if(tabela.get(i).getToken().equals("begin")){
                 while(!tabela.get(i).getToken().equals("end")){                                        
                         if(pilha.contains(tabela.get(i).getToken())){
-                            //System.out.println("usado: " + tabela.get(i).getToken());
+                            //System.out.println("usado: " + _tabela.get(i).getToken());
                             for(int j=pilha.size()-1; j>=0; j--){
                                 if(pilha.get(j).equals(tabela.get(i).getToken())){
                                     tabela.get(i).setTipo(MARK);
@@ -64,7 +64,7 @@ public class Semantico {
             }
             i--;
         }
-        pilha.push(tabela.get(index));
+        pilha.push(_tabela.get(index));
     }
     
     int empilhaVars(ArrayList<Token> tabela, int i)
@@ -154,19 +154,15 @@ public class Semantico {
         System.err.println("Erro: operacao entre " + esquerda.getTipo() + " e " + direita.getTipo() + " e' inv'alida");
         return "Invalida";        
     }
-    
-    public static ArrayList<Token> tabela = new ArrayList<>();
-    public static LeitorArquivo l = new LeitorArquivo();
-    public static Lexico lex = new Lexico();
-    public static Sintatico _sintatico = new Sintatico();
+
+    public static ArrayList<Token> _tabela = new ArrayList<>();
+    public static LeitorArquivo _leitorArquivo = new LeitorArquivo();
+    public static Sintatico _sintatico = new Sintatico(new Lexico());
+    public static Semantico _semantico = new Semantico();
 
     public static void main(String[] args) {
-        l.lerArquivo(tabela); // Preenche a tabela de símbolos
-        lex.executar(tabela); // Analisa a tabela de símbolos
-        _sintatico.lexico = lex;
-        _sintatico.executar(tabela);
-        Semantico s = new Semantico();
-        
-        s.empilha(tabela);
+        _leitorArquivo.lerArquivo(_tabela); // Preenche a _tabela de símbolos
+        _sintatico.executar(_tabela); // Preenche os tipos dos tokens variaveis e parametros, exceto onde estao usadas; verifica erros sintaticos
+        _semantico.empilha(_tabela);
     }
 }
