@@ -27,15 +27,19 @@ public class Semantico {
             }
             //verifica uso sem declaração
             if(tabela.get(i).getToken().equals("begin")){
-                while(!tabela.get(i).getToken().equals("end")){
+                while(!tabela.get(i).getToken().equals("end")){                    
                     if(tabela.get(i).getClassificacao().equals("Identificador")){
-                        if(!pilha.contains(tabela.get(i).getToken())){
+                        if(tabela.get(i+2).getClassificacao().equals("Identificador")){
+                            if((verificaTipoOp(tabela.get(i), tabela.get(i+2)).equals("Invalida")))
+                                System.err.println("Operacao entre " + tabela.get(i).getTipo() + " e " + tabela.get(i+2).getTipo() + " e' invla'lida");
+                        }
+                        else if(!pilha.contains(tabela.get(i).getToken())){
                             System.err.println("Variavel " + tabela.get(i).getToken() + " nao declarada");
                             break;
                         }
                     }
                     i++;
-                }                                               
+                }                
                 desempilha();
                 System.out.println();
             }
@@ -82,7 +86,7 @@ public class Semantico {
         i++;
         //Empilha os parâmetros
         while(!tabela.get(i).getToken().equals(")")){
-            if(!tabela.get(i).getToken().equals(",")){                        
+            if(tabela.get(i).getClassificacao().equals("Identificador")){                        
                 System.out.println(tabela.get(i).getToken());
                 identificadoresMesmoNome(tabela.get(i), i);
             }
@@ -120,6 +124,27 @@ public class Semantico {
         System.out.println("Desempilhou " + pilha.lastElement());
         pilha.pop();
         return cont+1;
+    }
+    
+    String verificaTipoOp(Token esquerda, Token direita)
+    {
+        if(esquerda.getTipo().equals("integer") && direita.getTipo().equals("integer")){            
+            return "integer";
+        }
+        else if(esquerda.getTipo().equals("integer") && direita.getTipo().equals("real")){
+            return "real";
+        }
+        else if(esquerda.getTipo().equals("real") && direita.getTipo().equals("integer")){
+            return "real";
+        }
+        else if(esquerda.getTipo().equals("real") && direita.getTipo().equals("real")){
+            return "real";
+        }
+        else if(esquerda.getTipo().equals("boolean") && direita.getTipo().equals("boolean")){
+            return "boolean";
+        }
+        System.err.println("Erro: operacao entre " + esquerda.getTipo() + " e " + direita.getTipo() + " e' inv'alida");
+        return "Invalida";        
     }
     
     public static ArrayList<Token> tabela = new ArrayList<>();
