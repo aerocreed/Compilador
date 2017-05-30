@@ -5,43 +5,40 @@ import Lexico.*;
 import java.util.ArrayList;
 
 public class Sintatico {
-    // *** Pesquise por "VERIFICAR" para avaliar o que falta!
-
-    static int index = 0;
-    static Lexico lexico;
-    static Token tokenAtual;
+    public int index = 0;
+    public Lexico lexico;
+    public Token tokenAtual;
 
 
 
-    public void executar(ArrayList<Token> tokens, Semantico semantico) { Programa(tokens, semantico); }
+    public void executar(ArrayList<Token> tokens) { Programa(tokens); }
 
     // Executa o próximo token
-    public void transicao(ArrayList<Token> tokens, Semantico semantico) {
+    public void transicao(ArrayList<Token> tokens) {
         if (index < tokens.size()) {
             tokenAtual = tokens.get(index);
-            // VERIFICAR
-            //self.__semantic.pushStack(self.__token)
+            // semantico.pushStack(token)
             index++;
         }
     }
 
 
 
-    public void Programa(ArrayList<Token> tokens, Semantico semantico) {
-        transicao(tokens, semantico);
+    public void Programa(ArrayList<Token> tokens) {
+        transicao(tokens);
 
         if (tokenAtual.getToken().equals("program")) {
-            transicao(tokens, semantico);
+            transicao(tokens);
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
-                transicao(tokens, semantico);
+                transicao(tokens);
 
                 if (tokenAtual.getToken().equals(";")) {
-                    transicao(tokens, semantico);
-                    DeclaracoesVariaveis(tokens, semantico);
-                    DeclaracoesSubProgramas(tokens, semantico);
-                    ComandoComposto(tokens, semantico);
-                    transicao(tokens, semantico);
+                    transicao(tokens);
+                    DeclaracoesVariaveis(tokens);
+                    DeclaracoesSubProgramas(tokens);
+                    ComandoComposto(tokens);
+                    transicao(tokens);
 
                     if (!tokenAtual.getToken().equals("."))
                         exibirErro(".");
@@ -56,12 +53,12 @@ public class Sintatico {
             exibirErro(";");
     }
 
-    public void DeclaracoesVariaveis(ArrayList<Token> tokens, Semantico semantico) {
+    public void DeclaracoesVariaveis(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("var")) {
-            transicao(tokens, semantico);
+            transicao(tokens);
 
             if (tokenAtual.getClassificacao().equals("Identificador"))
-                ListaDeclaracaoVariaveis(tokens, semantico);
+                ListaDeclaracaoVariaveis(tokens);
             else
                 exibirErro("Identificador");
         }
@@ -69,15 +66,33 @@ public class Sintatico {
 
 
 
-    public void ListaDeclaracaoVariaveis(ArrayList<Token> tokens, Semantico semantico) {
-        if (tokenAtual.getClassificacao().equals("Identificador")) {
-            transicao(tokens, semantico);
-            ListaIdentificadores(tokens, semantico);
-            ListaDeclaracaoVariaveis2(tokens, semantico);
+
+    public void ListaDeclaracaoVariaveis(ArrayList<Token> tokens) {
+        String varnome = tokenAtual.getToken();
+        ListaIdentificadores(tokens);
+
+        if (tokenAtual.getToken().equals(":")) {
+            transicao(tokens);
+            String vartipo = tokenAtual.getToken();
+            int varlinha = tokenAtual.getLinha();
+
+            // semantico.pushTypeStack(varnome, vartipo, varlinha)
+            Tipo();
+
+            transicao(tokens);
+
+            if (tokenAtual.getToken().equals(";")) {
+                transicao(tokens);
+                ListaDeclaracaoVariaveis2(tokens);
+            }
+            else
+                exibirErro(";");
         }
+        else
+            exibirErro(":");
     }
 
-    private void ListaDeclaracaoVariaveis2(ArrayList<Token> tokens, Semantico semantico) {
+    private void ListaDeclaracaoVariaveis2(ArrayList<Token> tokens) {
         /*
             Como a função lista_declaracao_variaveis() chama a função next_token()
             antes de chamar lista_declaracao_variaveis_ percebi que estavamos olhando
@@ -86,50 +101,49 @@ public class Sintatico {
             o teste para 1 token atrás a validação começou a funcionar, mas ainda não entendi
             o motivo.
          */
-        //if (tokenAtual.getClassificacao().equals("Identificador")) {
-        String varnome = tokenAtual.getToken();
-        ListaIdentificadores2(tokens, semantico);
+        if (tokenAtual.getClassificacao().equals("Identificador")) {
+            String varnome = tokenAtual.getToken();
+            ListaIdentificadores(tokens);
 
-        if (tokenAtual.getToken().equals(":")) {
-            transicao(tokens, semantico);
-            String vartipo = tokenAtual.getToken();
-            int varlinha = tokenAtual.getLinha();
+            if (tokenAtual.getToken().equals(":")) {
+                transicao(tokens);
+                String vartipo = tokenAtual.getToken();
+                int varlinha = tokenAtual.getLinha();
 
-            // VERIFICAR
-            // self.__semantic.typeStack.append(varnome, vartipo, varlinha))
-            Tipo();
+                // semantico.pushTypeStack(varnome, vartipo, varlinha)
+                Tipo();
 
-            transicao(tokens, semantico);
+                transicao(tokens);
 
-            if (tokenAtual.getToken().equals(";")) {
-                transicao(tokens, semantico);
-                ListaDeclaracaoVariaveis2(tokens, semantico);
+                if (tokenAtual.getToken().equals(";")) {
+                    transicao(tokens);
+                    ListaDeclaracaoVariaveis2(tokens);
+                }
+                else
+                    exibirErro(";");
             }
             else
-                exibirErro(";");
+                exibirErro(":");
         }
-        else
-            exibirErro(":");
-        //}
     }
 
 
 
-    public void ListaIdentificadores(ArrayList<Token> tokens, Semantico semantico) {
+    public void ListaIdentificadores(ArrayList<Token> tokens) {
         if (tokenAtual.getClassificacao().equals("Identificador")) {
-            transicao(tokens, semantico);
-            ListaDeclaracaoVariaveis2(tokens, semantico);
+            transicao(tokens);
+            ListaDeclaracaoVariaveis2(tokens);
         }
     }
 
-    public void ListaIdentificadores2(ArrayList<Token> tokens, Semantico semantico) {
+    public void ListaIdentificadores2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals(",")) {
-            transicao(tokens, semantico);
+            transicao(tokens);
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
-                // self.__semantic.typeStack.append(tokenAtual.getToken(), null, tokenAtual.getLinha())
-                transicao(tokens, semantico);
-                ListaIdentificadores2(tokens, semantico);
+                // semantico.pushTypeStack(tokenAtual.getToken(), null, tokenAtual.getLinha())
+                transicao(tokens);
+                ListaIdentificadores2(tokens);
             }
             else
                 exibirErro("Identificador");
@@ -138,17 +152,17 @@ public class Sintatico {
 
 
 
-    public void DeclaracoesSubProgramas(ArrayList<Token> tokens, Semantico semantico) {
-        DeclaracoesSubProgramas2(tokens, semantico);
+    public void DeclaracoesSubProgramas(ArrayList<Token> tokens) {
+        DeclaracoesSubProgramas2(tokens);
     }
 
-    public void DeclaracoesSubProgramas2(ArrayList<Token> tokens, Semantico semantico) {
+    public void DeclaracoesSubProgramas2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("procedure")) {
-            DeclaracaoSubPrograma(tokens, semantico);
-            transicao(tokens, semantico);
+            DeclaracaoSubPrograma(tokens);
+            transicao(tokens);
             if (tokenAtual.getToken().equals(";")) {
-                transicao(tokens, semantico);
-                DeclaracoesSubProgramas2(tokens, semantico);
+                transicao(tokens);
+                DeclaracoesSubProgramas2(tokens);
             }
             else
                 exibirErro(";");
@@ -157,17 +171,17 @@ public class Sintatico {
 
 
 
-    public void DeclaracaoSubPrograma(ArrayList<Token> tokens, Semantico semantico) {
+    public void DeclaracaoSubPrograma(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("procedure")) {
-            transicao(tokens, semantico);
+            transicao(tokens);
             if (tokenAtual.getClassificacao().equals("Identificador")) {
-                transicao(tokens, semantico);
-                Argumentos(tokens, semantico);
+                transicao(tokens);
+                Argumentos(tokens);
                 if (tokenAtual.getToken().equals(";")) {
-                    transicao(tokens, semantico);
-                    DeclaracoesVariaveis(tokens, semantico);
-                    DeclaracoesSubProgramas(tokens, semantico);
-                    ComandoComposto(tokens, semantico);
+                    transicao(tokens);
+                    DeclaracoesVariaveis(tokens);
+                    DeclaracoesSubProgramas(tokens);
+                    ComandoComposto(tokens);
                 }
                 else
                     exibirErro(";");
@@ -179,12 +193,12 @@ public class Sintatico {
 
 
 
-    public void Argumentos(ArrayList<Token> tokens, Semantico semantico) {
+    public void Argumentos(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("(")) {
-            transicao(tokens, semantico);
-            ListaParametros(tokens, semantico);
+            transicao(tokens);
+            ListaParametros(tokens);
             if (tokenAtual.getToken().equals(")")) {
-                transicao(tokens, semantico);
+                transicao(tokens);
                 //return
             }
             else
@@ -194,48 +208,48 @@ public class Sintatico {
 
 
 
-    public void ListaParametros(ArrayList<Token> tokens, Semantico semantico) {
+    public void ListaParametros(ArrayList<Token> tokens) {
         String varnome = tokenAtual.getToken();
-        ListaIdentificadores(tokens, semantico);
+        ListaIdentificadores(tokens);
         if (tokenAtual.getToken().equals(":")) {
-            transicao(tokens, semantico);
+            transicao(tokens);
             String vartipo = tokenAtual.getToken();
             int varlinha = tokenAtual.getLinha();
-            //self.__semantic.typeStack.append((id, typ, line))
+            // semantico.pushTypeStack(varnome, vartipo, varlinha)
             Tipo();
-            transicao(tokens, semantico);
-            ListaParametros2(tokens, semantico);
+            transicao(tokens);
+            ListaParametros2(tokens);
         }
         else
             exibirErro(":");
     }
 
-    public void ListaParametros2(ArrayList<Token> tokens, Semantico semantico) {
+    public void ListaParametros2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals(";")) {
-            transicao(tokens, semantico);
+            transicao(tokens);
             String varnome = tokenAtual.getToken();
-            ListaIdentificadores(tokens, semantico);
+            ListaIdentificadores(tokens);
             if (tokenAtual.getToken().equals(":")) {
-                transicao(tokens, semantico);
+                transicao(tokens);
                 String vartipo = tokenAtual.getToken();
                 int varlinha = tokenAtual.getLinha();
-                //self.__semantic.typeStack.append((id, typ, line))
+                // semantico.pushTypeStack(varnome, vartipo, varlinha)
                 Tipo();
-                transicao(tokens, semantico);
-                ListaParametros2(tokens, semantico);
+                transicao(tokens);
+                ListaParametros2(tokens);
             }
             // Faltou?
             //else
-                //exibirErro(":");
+            //exibirErro(":");
         }
     }
 
 
 
-    public void ComandoComposto(ArrayList<Token> tokens, Semantico semantico) {
+    public void ComandoComposto(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("begin")) {
-            transicao(tokens, semantico);
-            ComandosOpcionais(tokens, semantico);
+            transicao(tokens);
+            ComandosOpcionais(tokens);
             if (!tokenAtual.getToken().equals("end"))
                 exibirErro("end");
         }
@@ -243,69 +257,69 @@ public class Sintatico {
             exibirErro("begin");
     }
 
-    public void ComandosOpcionais(ArrayList<Token> tokens, Semantico semantico) {
+    public void ComandosOpcionais(ArrayList<Token> tokens) {
         if (tokenAtual.getClassificacao().equals("Identificador") ||
-            tokenAtual.getToken().equals("while") ||
-            tokenAtual.getToken().equals("if") ||
-            tokenAtual.getToken().equals("begin"))
-            ListaComandos(tokens, semantico);
+                tokenAtual.getToken().equals("while") ||
+                tokenAtual.getToken().equals("if") ||
+                tokenAtual.getToken().equals("begin"))
+            ListaComandos(tokens);
     }
 
 
 
-    public void ListaComandos(ArrayList<Token> tokens, Semantico semantico) {
-        Comando(tokens, semantico);
-        ListaComandos2(tokens, semantico);
+    public void ListaComandos(ArrayList<Token> tokens) {
+        Comando(tokens);
+        ListaComandos2(tokens);
     }
 
-    public void ListaComandos2(ArrayList<Token> tokens, Semantico semantico) {
+    public void ListaComandos2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals(";")) {
-            transicao(tokens, semantico);
-            Comando(tokens, semantico);
-            ListaComandos2(tokens, semantico);
+            transicao(tokens);
+            Comando(tokens);
+            ListaComandos2(tokens);
         }
     }
 
 
 
-    public void Comando(ArrayList<Token> tokens, Semantico semantico) {
+    public void Comando(ArrayList<Token> tokens) {
         // Identificadores
         if (tokenAtual.getClassificacao().equals("Identificador")) {
-            transicao(tokens, semantico);
+            transicao(tokens);
 
             if (tokenAtual.getToken().equals(":=")) {
-                transicao(tokens, semantico);
-                Expressao(tokens, semantico);
+                transicao(tokens);
+                Expressao(tokens);
             } else if (tokenAtual.getToken().equals("(")) {
-                AtivacaoProcedimento(tokens, semantico);
-                transicao(tokens, semantico);
+                AtivacaoProcedimento(tokens);
+                transicao(tokens);
             }
         }
         // Comando composto
         else if (tokenAtual.getToken().equals("begin")) {
-            ComandoComposto(tokens, semantico);
+            ComandoComposto(tokens);
         }
         // -> if
         else if (tokenAtual.getToken().equals("if")) {
-            transicao(tokens, semantico);
-            Expressao(tokens, semantico);
+            transicao(tokens);
+            Expressao(tokens);
 
             if (tokenAtual.getToken().equals("then")) {
-                transicao(tokens, semantico);
-                Comando(tokens, semantico);
-                Else(tokens, semantico);
+                transicao(tokens);
+                Comando(tokens);
+                Else(tokens);
             }
             else
                 exibirErro("then");
         }
         // -> while
         else if (tokenAtual.getToken().equals("while")) {
-            transicao(tokens, semantico);
-            Expressao(tokens, semantico);
+            transicao(tokens);
+            Expressao(tokens);
 
             if (tokenAtual.getToken().equals("do")) {
-                transicao(tokens, semantico);
-                Comando(tokens, semantico);
+                transicao(tokens);
+                Comando(tokens);
             }
             else
                 exibirErro("do");
@@ -317,10 +331,10 @@ public class Sintatico {
 
 
 
-    public void AtivacaoProcedimento(ArrayList<Token> tokens, Semantico semantico) {
+    public void AtivacaoProcedimento(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("(")) {
-            transicao(tokens, semantico);
-            ListaExpressao(tokens, semantico);
+            transicao(tokens);
+            ListaExpressao(tokens);
 
             if (!tokenAtual.getToken().equals(")"))
                 exibirErro(")");
@@ -329,106 +343,106 @@ public class Sintatico {
 
 
 
-    public void Else(ArrayList<Token> tokens, Semantico semantico) {
+    public void Else(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("else")) {
-            transicao(tokens, semantico);
-            Comando(tokens, semantico);
+            transicao(tokens);
+            Comando(tokens);
         }
     }
 
 
 
-    public void ListaExpressao(ArrayList<Token> tokens, Semantico semantico) {
-        Expressao(tokens, semantico);
+    public void ListaExpressao(ArrayList<Token> tokens) {
+        Expressao(tokens);
 
         if (!tokenAtual.getToken().equals(")"))
-            ListaExpressao2(tokens, semantico);
+            ListaExpressao2(tokens);
     }
 
-    public void ListaExpressao2(ArrayList<Token> tokens, Semantico semantico) {
+    public void ListaExpressao2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals(",")) {
-            transicao(tokens, semantico);
-            Expressao(tokens, semantico);
-            ListaExpressao2(tokens, semantico);
+            transicao(tokens);
+            Expressao(tokens);
+            ListaExpressao2(tokens);
         }
     }
 
 
 
-    public void Expressao(ArrayList<Token> tokens, Semantico semantico) {
-        ExpressaoSimples(tokens, semantico);
-        ExpressaoZ(tokens, semantico);
+    public void Expressao(ArrayList<Token> tokens) {
+        ExpressaoSimples(tokens);
+        ExpressaoZ(tokens);
     }
 
 
 
-    public void ExpressaoZ(ArrayList<Token> tokens, Semantico semantico) {
+    public void ExpressaoZ(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("=") ||
-            tokenAtual.getToken().equals("<") ||
-            tokenAtual.getToken().equals(">") ||
-            tokenAtual.getToken().equals("<=") ||
-            tokenAtual.getToken().equals(">=") ||
-            tokenAtual.getToken().equals("<>") ||
-            tokenAtual.getToken().equals("->")) {
-            OpRelacional(tokens, semantico);
-            transicao(tokens, semantico);
-            ExpressaoSimples(tokens, semantico);
+                tokenAtual.getToken().equals("<") ||
+                tokenAtual.getToken().equals(">") ||
+                tokenAtual.getToken().equals("<=") ||
+                tokenAtual.getToken().equals(">=") ||
+                tokenAtual.getToken().equals("<>") ||
+                tokenAtual.getToken().equals("->")) {
+            OpRelacional(tokens);
+            transicao(tokens);
+            ExpressaoSimples(tokens);
         }
     }
 
 
 
-    public void ExpressaoSimples(ArrayList<Token> tokens, Semantico semantico) {
+    public void ExpressaoSimples(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("+") ||
-            tokenAtual.getToken().equals("-")) {
-            Sinal(tokens, semantico);
-            transicao(tokens, semantico);
-            Termo(tokens, semantico);
-            transicao(tokens, semantico);
-            ExpressaoSimples2(tokens, semantico);
+                tokenAtual.getToken().equals("-")) {
+            Sinal(tokens);
+            transicao(tokens);
+            Termo(tokens);
+            transicao(tokens);
+            ExpressaoSimples2(tokens);
         }
         else {
-            Termo(tokens, semantico);
-            ExpressaoSimples2(tokens, semantico);
+            Termo(tokens);
+            ExpressaoSimples2(tokens);
         }
     }
 
-    public void ExpressaoSimples2(ArrayList<Token> tokens, Semantico semantico) {
+    public void ExpressaoSimples2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("+") ||
-            tokenAtual.getToken().equals("-") ||
-            tokenAtual.getToken().equals("or")) {
-            OpAditivo(tokens, semantico);
-            transicao(tokens, semantico);
-            Termo(tokens, semantico);
-            ExpressaoSimples2(tokens, semantico);
+                tokenAtual.getToken().equals("-") ||
+                tokenAtual.getToken().equals("or")) {
+            OpAditivo(tokens);
+            transicao(tokens);
+            Termo(tokens);
+            ExpressaoSimples2(tokens);
         }
     }
 
 
 
-    public void Termo(ArrayList<Token> tokens, Semantico semantico) {
-        Fator(tokens, semantico);
-        transicao(tokens, semantico);
-        Termo2(tokens, semantico);
+    public void Termo(ArrayList<Token> tokens) {
+        Fator(tokens);
+        transicao(tokens);
+        Termo2(tokens);
     }
 
-    public void Termo2(ArrayList<Token> tokens, Semantico semantico) {
+    public void Termo2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("*") ||
-            tokenAtual.getToken().equals("/") ||
-            tokenAtual.getToken().equals("and")) {
-            OpMultiplicativo(tokens, semantico);
-            transicao(tokens, semantico);
-            Fator(tokens, semantico);
-            transicao(tokens, semantico);
-            Termo2(tokens, semantico);
+                tokenAtual.getToken().equals("/") ||
+                tokenAtual.getToken().equals("and")) {
+            OpMultiplicativo(tokens);
+            transicao(tokens);
+            Fator(tokens);
+            transicao(tokens);
+            Termo2(tokens);
         }
     }
 
 
 
-    public void Fator(ArrayList<Token> tokens, Semantico semantico) {
+    public void Fator(ArrayList<Token> tokens) {
         if (tokenAtual.getClassificacao().equals("Identificador"))
-            FatorExp(tokens, semantico);
+            FatorExp(tokens);
         /*
         else if (tokenAtual.getClassificacao().equals("integer") ||
                  tokenAtual.getClassificacao().equals("real") ||
@@ -437,25 +451,25 @@ public class Sintatico {
             return;
         */
         else if (tokenAtual.getToken().equals("(")) {
-            transicao(tokens, semantico);
-            Expressao(tokens, semantico);
+            transicao(tokens);
+            Expressao(tokens);
 
             if (!tokenAtual.getToken().equals(")"))
                 exibirErro(")");
         }
         else if (tokenAtual.getToken().equals("not")) {
-            transicao(tokens, semantico);
-            Fator(tokens, semantico);
+            transicao(tokens);
+            Fator(tokens);
         }
         else
             exibirErro("Fator");
     }
 
-    public void FatorExp(ArrayList<Token> tokens, Semantico semantico) {
+    public void FatorExp(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("(")) {
-            transicao(tokens, semantico);
-            ListaExpressao(tokens, semantico);
-            transicao(tokens, semantico);
+            transicao(tokens);
+            ListaExpressao(tokens);
+            transicao(tokens);
 
             if (!tokenAtual.getToken().equals(")"))
                 exibirErro(")");
@@ -464,36 +478,36 @@ public class Sintatico {
 
 
 
-    public void Sinal(ArrayList<Token> tokens, Semantico semantico) {
+    public void Sinal(ArrayList<Token> tokens) {
         if (!tokenAtual.getToken().equals("+") &&
-            !tokenAtual.getToken().equals("-"))
+                !tokenAtual.getToken().equals("-"))
             exibirErro("sinal");
     }
 
 
 
-    public void OpRelacional(ArrayList<Token> tokens, Semantico semantico) {
+    public void OpRelacional(ArrayList<Token> tokens) {
         if (!tokenAtual.getToken().equals("=") &&
-            !tokenAtual.getToken().equals("<") &&
-            !tokenAtual.getToken().equals(">") &&
-            !tokenAtual.getToken().equals("<=") &&
-            !tokenAtual.getToken().equals(">=") &&
-            !tokenAtual.getToken().equals("<>") &&
-            !tokenAtual.getToken().equals("->"))
+                !tokenAtual.getToken().equals("<") &&
+                !tokenAtual.getToken().equals(">") &&
+                !tokenAtual.getToken().equals("<=") &&
+                !tokenAtual.getToken().equals(">=") &&
+                !tokenAtual.getToken().equals("<>") &&
+                !tokenAtual.getToken().equals("->"))
             exibirErro("relacional");
     }
 
-    public void OpAditivo(ArrayList<Token> tokens, Semantico semantico) {
+    public void OpAditivo(ArrayList<Token> tokens) {
         if (!tokenAtual.getToken().equals("+") &&
-            !tokenAtual.getToken().equals("-") &&
-            !tokenAtual.getToken().equals("or"))
+                !tokenAtual.getToken().equals("-") &&
+                !tokenAtual.getToken().equals("or"))
             exibirErro("aditivo");
     }
 
-    public void OpMultiplicativo(ArrayList<Token> tokens, Semantico semantico) {
+    public void OpMultiplicativo(ArrayList<Token> tokens) {
         if (!tokenAtual.getToken().equals("*") &&
-            !tokenAtual.getToken().equals("/") &&
-            !tokenAtual.getToken().equals("and"))
+                !tokenAtual.getToken().equals("/") &&
+                !tokenAtual.getToken().equals("and"))
             exibirErro("multiplicativo");
     }
 
@@ -527,6 +541,7 @@ public class Sintatico {
     public static ArrayList<Token> _tabela = new ArrayList<>();
     public static LeitorArquivo _leitorArquivo = new LeitorArquivo();
     public static Lexico _lexico = new Lexico();
+    public static Sintatico _sintatico = new Sintatico();
 
     public static void main(String[] args) {
         _leitorArquivo.lerArquivo(_tabela); // Preenche lexico _tabela de símbolos
@@ -534,8 +549,8 @@ public class Sintatico {
 
         Sintatico sintatico = new Sintatico();
 
+        /*
         // Atribuindo tipos das variaveis
-
         String tipoEncontrado = "";
         for (int i = 0; i < _tabela.size(); i++) {
             System.out.println(_tabela.get(i)); // Printa tokens
@@ -560,7 +575,7 @@ public class Sintatico {
             }
             else {
                 // Se encontrou tipo
-                if (token.getClassificacao().equals("Identificador")/* && !tipoEncontrado.equals("")*/) {
+                if (token.getClassificacao().equals("Identificador")) {
                     //System.out.println("Atribuido o tipo '" + tipoEncontrado + "' a variavel '" + token.getToken() + "'.");
                     token.setTipo(tipoEncontrado);
                 }
@@ -571,5 +586,14 @@ public class Sintatico {
                 }
             }
         }
+        */
+
+
+
+        _sintatico.lexico = _lexico;
+        _sintatico.executar(_tabela);
+        //System.out.println("\n\n\n");
+        //for (int i = 0; i < _tabela.size(); i++)
+            //System.out.println(_tabela.get(i)); // Printa tokens
     }
 }
