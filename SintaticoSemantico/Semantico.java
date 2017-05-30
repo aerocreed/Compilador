@@ -25,7 +25,17 @@ public class Semantico {
             if(tabela.get(i).getToken().equals("procedure")){
                 i = empilhaProcedure(tabela, i);
             }
+            //verifica uso sem declaração
             if(tabela.get(i).getToken().equals("begin")){
+                while(!tabela.get(i).getToken().equals("end")){
+                    if(tabela.get(i).getClassificacao().equals("Identificador")){
+                        if(!pilha.contains(tabela.get(i).getToken())){
+                            System.err.println("Variavel " + tabela.get(i).getToken() + " nao declarada");
+                            break;
+                        }
+                    }
+                    i++;
+                }                                               
                 desempilha();
                 System.out.println();
             }
