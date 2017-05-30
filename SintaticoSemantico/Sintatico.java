@@ -26,21 +26,16 @@ public class Sintatico {
 
     public void Programa(ArrayList<Token> tokens) {
         transicao(tokens);
-System.out.println("1 > " + tokenAtual);
 
         if (tokenAtual.getToken().equals("program")) {
             transicao(tokens);
-System.out.println("2 > " + tokenAtual);
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 transicao(tokens);
-System.out.println("3 > " + tokenAtual);
 
                 if (tokenAtual.getToken().equals(";")) {
                     transicao(tokens);
-System.out.println("4 > " + tokenAtual);
                     DeclaracoesVariaveis(tokens);
-System.out.println("\n");
                     DeclaracoesSubProgramas(tokens);
                     ComandoComposto(tokens);
                     transicao(tokens);
@@ -61,7 +56,6 @@ System.out.println("\n");
     public void DeclaracoesVariaveis(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("var")) {
             transicao(tokens);
-            System.out.println("5, 20 > " + tokenAtual);
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 ListaDeclaracaoVariaveis(tokens);
@@ -78,18 +72,16 @@ System.out.println("\n");
         String varnome = tokenAtual.getToken();
         ListaIdentificadores(tokens);
 
-        System.out.println("8, 23 > " + tokenAtual);
         if (tokenAtual.getToken().equals(":")) {
             transicao(tokens);
-            System.out.println("9, 24 > " + tokenAtual);
             String vartipo = tokenAtual.getToken();
             int varlinha = tokenAtual.getLinha();
 
             // semantico.pushTypeStack(varnome, vartipo, varlinha)
+            System.out.println("1: [ Varnome: " + varnome + " ] [ Vartipo: " + vartipo + " ] [ Varlinha: " + varlinha + " ]");
             Tipo();
 
             transicao(tokens);
-            System.out.println("10, 25 > " + tokenAtual);
 
             if (tokenAtual.getToken().equals(";")) {
                 transicao(tokens);
@@ -111,7 +103,6 @@ System.out.println("\n");
             o teste para 1 token atrás a validação começou a funcionar, mas ainda não entendi
             o motivo.
          */
-        System.out.println("11, 26 > " + tokenAtual);
         if (tokenAtual.getClassificacao().equals("Identificador")) {
             String varnome = tokenAtual.getToken();
             ListaIdentificadores(tokens);
@@ -122,6 +113,7 @@ System.out.println("\n");
                 int varlinha = tokenAtual.getLinha();
 
                 // semantico.pushTypeStack(varnome, vartipo, varlinha)
+                System.out.println("2: [ Varnome: " + varnome + " ] [ Vartipo: " + vartipo + " ] [ Varlinha: " + varlinha + " ]");
                 Tipo();
 
                 transicao(tokens);
@@ -143,7 +135,6 @@ System.out.println("\n");
     public void ListaIdentificadores(ArrayList<Token> tokens) {
         if (tokenAtual.getClassificacao().equals("Identificador")) {
             transicao(tokens);
-            System.out.println("6, 15, 21 > " + tokenAtual);
             ListaIdentificadores2(tokens);
         }
     }
@@ -151,12 +142,11 @@ System.out.println("\n");
     public void ListaIdentificadores2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals(",")) {
             transicao(tokens);
-            System.out.println("7, 22 > " + tokenAtual);
 
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 // semantico.pushTypeStack(tokenAtual.getToken(), null, tokenAtual.getLinha())
+                System.out.println("3: [ Varnome: " + tokenAtual.getToken()+ " ] [ Vartipo: " + "null" + " ] [ Varlinha: " + tokenAtual.getLinha() + " ]");
                 transicao(tokens);
-                System.out.println("8, 23 > " + tokenAtual);
                 ListaIdentificadores2(tokens);
             }
             else
@@ -188,14 +178,11 @@ System.out.println("\n");
     public void DeclaracaoSubPrograma(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("procedure")) {
             transicao(tokens);
-            System.out.println("12 > " + tokenAtual);
             if (tokenAtual.getClassificacao().equals("Identificador")) {
                 transicao(tokens);
-                System.out.println("13 > " + tokenAtual);
                 Argumentos(tokens);
                 if (tokenAtual.getToken().equals(";")) {
                     transicao(tokens);
-                    System.out.println("19 > " + tokenAtual);
                     DeclaracoesVariaveis(tokens);
                     DeclaracoesSubProgramas(tokens);
                     ComandoComposto(tokens);
@@ -213,11 +200,9 @@ System.out.println("\n");
     public void Argumentos(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals("(")) {
             transicao(tokens);
-            System.out.println("14 > " + tokenAtual);
             ListaParametros(tokens);
             if (tokenAtual.getToken().equals(")")) {
                 transicao(tokens);
-                System.out.println("18 > " + tokenAtual);
                 //return
             }
             else
@@ -228,18 +213,16 @@ System.out.println("\n");
 
 
     public void ListaParametros(ArrayList<Token> tokens) {
-        System.out.println("14 > " + tokenAtual);
         String varnome = tokenAtual.getToken();
         ListaIdentificadores(tokens);
         if (tokenAtual.getToken().equals(":")) {
             transicao(tokens);
-            System.out.println("16 > " + tokenAtual);
             String vartipo = tokenAtual.getToken();
             int varlinha = tokenAtual.getLinha();
             // semantico.pushTypeStack(varnome, vartipo, varlinha)
+            System.out.println("4: [ Varnome: " + varnome + " ] [ Vartipo: " + vartipo + " ] [ Varlinha: " + varlinha + " ]");
             Tipo();
             transicao(tokens);
-            System.out.println("17 > " + tokenAtual);
             ListaParametros2(tokens);
         }
         else
@@ -256,6 +239,7 @@ System.out.println("\n");
                 String vartipo = tokenAtual.getToken();
                 int varlinha = tokenAtual.getLinha();
                 // semantico.pushTypeStack(varnome, vartipo, varlinha)
+                System.out.println("5: [ Varnome: " + varnome + " ] [ Vartipo: " + vartipo + " ] [ Varlinha: " + varlinha + " ]");
                 Tipo();
                 transicao(tokens);
                 ListaParametros2(tokens);
@@ -280,7 +264,6 @@ System.out.println("\n");
     }
 
     public void ComandosOpcionais(ArrayList<Token> tokens) {
-        System.out.println("27 > " + tokenAtual);
         if (tokenAtual.getClassificacao().equals("Identificador") ||
                 tokenAtual.getToken().equals("while") ||
                 tokenAtual.getToken().equals("if") ||
@@ -293,14 +276,12 @@ System.out.println("\n");
 
     public void ListaComandos(ArrayList<Token> tokens) {
         Comando(tokens);
-        System.out.println("11 > " + tokenAtual);
         ListaComandos2(tokens);
     }
 
     public void ListaComandos2(ArrayList<Token> tokens) {
         if (tokenAtual.getToken().equals(";")) {
             transicao(tokens);
-            System.out.println("33q > " + tokenAtual);
             Comando(tokens);
             ListaComandos2(tokens);
         }
@@ -312,11 +293,9 @@ System.out.println("\n");
         // Identificadores
         if (tokenAtual.getClassificacao().equals("Identificador")) {
             transicao(tokens);
-            System.out.println("28 > " + tokenAtual);
 
             if (tokenAtual.getToken().equals(":=")) {
                 transicao(tokens);
-                System.out.println("29 > " + tokenAtual);
                 Expressao(tokens);
             } else if (tokenAtual.getToken().equals("(")) {
                 AtivacaoProcedimento(tokens);
@@ -355,7 +334,7 @@ System.out.println("\n");
         // Não exibe erro
         else if (tokenAtual.getToken().equals("end"))
             return;
-        // If it's not a command
+            // If it's not a command
         else
             exibirErro("Comando");
     }
@@ -433,9 +412,7 @@ System.out.println("\n");
             ExpressaoSimples2(tokens);
         }
         else {
-            System.out.println("29 > " + tokenAtual);
             Termo(tokens);
-            System.out.println("30 > " + tokenAtual);
             ExpressaoSimples2(tokens);
         }
     }
@@ -446,7 +423,6 @@ System.out.println("\n");
                 tokenAtual.getToken().equals("or")) {
             OpAditivo(tokens);
             transicao(tokens);
-            System.out.println("31 > " + tokenAtual);
             Termo(tokens);
             ExpressaoSimples2(tokens);
         }
@@ -455,7 +431,7 @@ System.out.println("\n");
 
 
     public void Termo(ArrayList<Token> tokens) {
-        Fator(tokens);System.out.println("11, 32 > " + tokenAtual);
+        Fator(tokens);
         transicao(tokens);
         Termo2(tokens);
     }
@@ -478,9 +454,9 @@ System.out.println("\n");
         if (tokenAtual.getClassificacao().equals("Identificador"))
             FatorExp(tokens);
         else if (tokenAtual.getClassificacao().equals("Numero Inteiro") ||
-                 tokenAtual.getClassificacao().equals("Numero Real") ||
-                 tokenAtual.getToken().equals("true") ||
-                 tokenAtual.getToken().equals("false"))
+                tokenAtual.getClassificacao().equals("Numero Real") ||
+                tokenAtual.getToken().equals("true") ||
+                tokenAtual.getToken().equals("false"))
             return; // Não exibe erro
         else if (tokenAtual.getToken().equals("(")) {
             transicao(tokens);
@@ -626,6 +602,6 @@ System.out.println("\n");
         _sintatico.executar(_tabela);
         //System.out.println("\n\n\n");
         //for (int i = 0; i < _tabela.size(); i++)
-            //System.out.println(_tabela.get(i)); // Printa tokens
+        //System.out.println(_tabela.get(i)); // Printa tokens
     }
 }
